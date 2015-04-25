@@ -1,0 +1,13 @@
+{
+    "name": "sample",
+    "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/montagestudio/contour.git"
+    },
+    "dependencies": {
+        "contour": "montagestudio/contour#abe61587e1b4",
+        "montage": "~0.14.0"
+    },
+    "bundle": [ "ui/main.reel" ]
+}

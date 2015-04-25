@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        Contour Toggle Sample
+    </title>
+    <link rel="stylesheet" href="main.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "main"}
+            }
+        },
+        "toggleButton1": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggleButton1"},
+                "label" : "Layers"
+            }
+        },
+        "toggleButton2": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggleButton2"},
+                "label" : "Display on web",
+                "checked": true
+            }
+        },
+        "toggleButton3": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggleButton3"},
+                "label" : "Restrict Access?",
+                "checked": true
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="main" data-montage-skin="light" class="Main">
+        <div style="margin-left: 10px; margin-top: 10px; width: 300px">
+            <h4>Contour Toggle Sample</h4>
+            <div data-montage-id="toggleButton1"></div>
+            <div style="margin-top: 5px" data-montage-id="toggleButton2"></div>
+            <div style="margin-top: 5px" data-montage-id="toggleButton3"></div>
+        </div>
+    </div>
+</body>
+</html>

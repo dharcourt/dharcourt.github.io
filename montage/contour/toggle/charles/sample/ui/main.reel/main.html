@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        Contour Toggle Sample
+    </title>
+    <link rel="stylesheet" href="main.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "main"}
+            }
+        },
+        "titleBar": {
+            "prototype": "contour/ui/control/title-bar.reel",
+            "properties": {
+                "element": {"#": "titleBar"},
+                "title": "Contour Toggle Sample",
+                "isLarge": true
+            }
+        },
+        "toggle1": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle1"},
+                "label" : "Customize Mode"
+            }
+        },
+        "toggle2": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle2"},
+                "label" : "Show enabled layers first",
+                "checked": true
+            }
+        },
+        "toggle3": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle3"},
+                "label" : "Display Hidden",
+                "checked": true
+            }
+        },
+        "toggle4": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle4"},
+                "label" : "Display on web",
+                "checked": true
+            }
+        },
+        "toggle5": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle5"},
+                "label" : "Restrict Access?",
+                "checked": true
+            }
+        },
+        "toggle6": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle6"},
+                "label" : "Show Layer",
+                "checked": true
+            }
+        },
+        "toggle7": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle7"},
+                "label" : "Extent and Layers"
+            }
+        },
+        "toggle8": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle8"},
+                "label" : "Extent",
+                "checked": true
+            }
+        },
+        "toggle9": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle9"},
+                "label" : "Layers"
+            }
+        },
+        "toggle10": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle10"},
+                "label" : "Default Bookmark",
+                "checked": true
+            }
+        },
+        "toggle11": {
+            "prototype": "contour/ui/control/toggle.reel",
+            "properties": {
+                "element": {"#": "toggle11"},
+                "label" : "Some very long label to test how overflow is handled",
+                "checked": true
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="main" class="Main">
+        <div class="Main-panel">
+            <div data-montage-id="titleBar"></div>
+            <div data-montage-id="toggle1" class="Main-toggle"></div>
+            <div data-montage-id="toggle2" class="Main-toggle"></div>
+            <div data-montage-id="toggle3" class="Main-toggle"></div>
+            <div data-montage-id="toggle4" class="Main-toggle"></div>
+            <div data-montage-id="toggle5" class="Main-toggle"></div>
+            <div data-montage-id="toggle6" class="Main-toggle"></div>
+            <div data-montage-id="toggle7" class="Main-toggle"></div>
+            <div data-montage-id="toggle8" class="Main-toggle"></div>
+            <div data-montage-id="toggle9" class="Main-toggle"></div>
+            <div data-montage-id="toggle10" class="Main-toggle"></div>
+            <div data-montage-id="toggle11" class="Main-toggle"></div>
+            <!-- <img src="mockup.png" width="320px" class="Main-mockup"></img> -->
+        </div>
+    </div>
+</body>
+</html>

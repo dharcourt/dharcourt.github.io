@@ -1,0 +1,75 @@
+@font-face {
+    src: url('../../node_modules/contour/assets/fonts/contour/contour.woff') format('woff');
+    font-family: 'Contour';
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    src: url('../../node_modules/contour/assets/fonts/proxima-nova/proxima-nova-regular.woff') format('woff');
+    font-family: 'Proxima Nova';
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    src: url('../../node_modules/contour/assets/fonts/proxima-nova/proxima-nova-semibold.woff') format('woff');
+    font-family: 'Proxima Nova';
+    font-style: normal;
+    font-weight: 600;
+}
+
+@font-face {
+    src: url('../../node_modules/contour/assets/fonts/proxima-nova/proxima-nova-bold.woff') format('woff');
+    font-family: 'Proxima Nova';
+    font-style: normal;
+    font-weight: bold;
+}
+
+body,
+html,
+.Main {
+    background-color: darkgrey;
+    height: 100%;
+    margin: 0;
+}
+
+.Main {
+    align-items: center;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    font-family: "Proxima Nova", sans-serif;
+    justify-content: center;
+}
+
+.Main-mockup {
+    /* For use when comparing the rendered layout to the mockup. */
+    opacity: 0.5;
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 45px;
+}
+
+.Main-panel {
+    background-color: whitesmoke;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+    margin: 40px;
+    position: relative;
+    width: 320px;
+    height: 517px;
+}
+
+.Main-panel .contour-TitleBar {
+    background-color: white;
+    border-bottom: 1px solid #dde3ec;
+    color: black;
+}
+
+.Main-toggle {
+    border-bottom: 1px solid #dde3ec;
+}
