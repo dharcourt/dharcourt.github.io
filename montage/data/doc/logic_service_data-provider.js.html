@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: logic/service/data-provider.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: logic/service/data-provider.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Montage = require("montage").Montage;
+
+/**
+ * This class documents the properties and methods of objects that support the
+ * DataProvider [protocol]{@linkplain external:Protocol}. Data provider classes
+ * can extend this class but they aren't required to, they just need to have the
+ * [data]{@link DataProvider#data} property and the
+ * [requestData()]{@link DataProvider#requestData} method of this class.
+ *
+ * @class
+ * @extends external:Montage
+ *
+ */
+exports.DataProvider = Montage.specialize(/** @lends DataProvider# */{
+
+    /**
+     * At any point in time a data provider’s [data]{@link DataProvider#data}
+     * array and the length of that array represent the state of the data as it
+     * is then known to the data provider. If a data provider knows that an item
+     * will need to be in its [data]{@link DataProvider#data} array but doesn’t
+     * yet know the value of that item, it will place in the array an undefined
+     * value for that item. Data providers can’t be used with data that includes
+     * actual `undefined` values, so the presence of an `undefined` value in a
+     * data provider’s [data]{@link DataProvider#data} array is an unambiguous
+     * indication that the value of the corresponding item is expected but
+     * hasn’t yet been received.
+     *
+     * As a data provider receives new data, or if its data changes for any
+     * reason, it will update its [data]{@link DataProvider#data} array
+     * correspondingly, most notably by replacing `undefined` values with real
+     * objects and by changing the array’s length. A
+     * [range change listener]{@linkplain external:RangeChangeListener}
+     * can be used to monitor those changes, and components like Montage's
+     * [Repetition]{@linkcode external:Repetition} will automatically do this
+     * monitoring.
+     *
+     * Although the contents of a data provider's
+     * [data]{@link DataProvider#data} array may change over time, the array
+     * itself will not change. This class creates the
+     * [data]{@link DataProvider#data} array lazilly the first time it is needed
+     * and then does not allow that property to change.
+     *
+     * @type {Array}
+     */
+    data: {
+        get: function() {
+            if (!this._data) {
+                this._data = [];
+            }
+            return this._data;
+        }
+    },
+
+    /**
+     * Objects using a data provider can call the provider’s
+     * [requestData()]{@link DataProvider#requestData} method to indicate that
+     * they want the data in the specified range. If the requested data is not
+     * in the provider’s [data]{@link DataProvider#data} array yet, and if that
+     * data can be obtained, it will be obtained synchronously or asynchronously
+     * and placed in the data array as described in the documentation for the
+     * [data]{@link DataProvider#data} property above.
+     *
+     * When a data provider’s data is obtained asynchronously no guarantee is
+     * given about exactly when that data will end up in the provider's
+     * [data]{@link DataProvider#data} array. Also, no guarantee is given that a
+     * data provider will provide through its [data]{@link DataProvider#data}
+     * array only the data specifically requested in
+     * [requestData()]{@link DataProvider#requestData} calls: It may obtain and
+     * provide more data.
+     *
+     * In spite of these lack of guarantees data providers try to be smart about
+     * what data they provide or withhold based on
+     * [requestData()]{@link DataProvider#requestData} calls and based on
+     * algorithms specific to each type of provider.
+     *
+     * This class does nothing when this method is called.
+     *
+     * @method
+     * @argument {int} start  - The index of the start of the range of the
+     *                          requested data. When `undefined`, all available
+     *                          data is requested.
+     * @argument {int} length - The length of the range of the requested data.
+     *                          When `undefined`, all available data is
+     *                          requested.
+     */
+    requestData: {
+        value: function (start, length) {
+        }
+    }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 12:27:57 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
