@@ -26,9 +26,13 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var Montage = require("montage").Montage,
+            <pre class="prettyprint source linenums"><code>var bootstrap = require("logic/bootstrap/bootstrap.js"),
+    Montage = require("montage").Montage,
     DataMapping = require("logic/service/data-mapping").DataMapping,
-    DataStream = require("logic/service/data-stream").DataStream;
+    DataSelector = require("logic/service/data-selector").DataSelector,
+    DataStream = require("logic/service/data-stream").DataStream,
+    ObjectDescriptor = require("logic/model/object-descriptor").ObjectDescriptor,
+    Promise = require("bluebird");
 
 /**
  * Provides data objects and potentially manages changes to them.
@@ -36,7 +40,22 @@
  * @class
  * @extends external:Montage
  */
-exports.DataService = Montage.specialize(/** @lends DataService# */{
+var DataService = exports.DataService = Montage.specialize(/** @lends DataService# */{
+
+    /**
+     * Sets the first created service as the root service. Subclasses
+     * implementing a constructor should call this constructor at the beginning
+     * of their constructor.
+     *
+     * @method
+     */
+    constructor: {
+        value: function () {
+            if (!DataService.rootService) {
+                DataService.rootService = this;
+            }
+        }
+    },
 
     /**
      * The parent of this service if it is a child of another service, or
@@ -49,7 +68,7 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
     },
 
     /**
-     * Map of child services used to get and manage types of objects not
+     * Map of child services used to fetch and manage types of objects not
      * directly obtained or managed by this service.
      *
      * Values can be added or removed from the map but the map itself cannot be
@@ -90,27 +109,37 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
     },
 
     /**
-     * Get data from the service. This is the main method used by clients of
+     * Fetch data from the service. This is the main method used by clients of
      * this service.
      *
-     * This method gets raw data from a server or other source using the
-     * [getRawData()]{@link DataService#getRawData} method, maps that data to
-     * data objects that fit into an application's data model using the
+     * This method fetches raw data from a server or other source using the
+     * [fetchRawData()]{@link DataService#fetchRawData} method, maps that data
+     * to data objects that fit into an application's data model using the
      * service's [mapping]{@link DataService#mapping}, registers those objects
      * so the service can manage them, and then return those objects in the
      * specified stream or in a new stream created for this purpose.
      *
+     * Subclasses should not override this method, they should instead override
+     * [fetchRawData()]{@link DataService#fetchRawData} and their
+     * [mapping]{@link DataService#mapping}'s
+     * [mapRawData]{@link DataMapping#mapRawData}.
+     *
      * @method
-     * @argument {ObjectDescriptor} type - The type of the data requested.
-     * @argument {DataSelector} selector - Criteria that the returned data
-     *                                     objects must satisfy.
+     * @argument {DataSelector} selector - Defines what data should be returned.
      * @argument {DataStream} stream     - The stream to which the provided data
      *                                     should be added. If not stream is
      *                                     provided a stream will be created and
      *                                     returned by this method.
      */
-    getData: {
-        value: function (type, selector, stream) {
+    fetchData: {
+        value: function (selector, stream) {
+            // Accept a type in lieu of a selector.
+            var type;
+            if (!(selector instanceof DataSelector) &amp;&amp; selector instanceof ObjectDescriptor) {
+                type = selector;
+                selector = new DataSelector();
+                selector.type = type;
+            }
             // Set up the stream.
             if (!stream) {
                 stream = new DataStream();
@@ -118,13 +147,12 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
             if (!stream.service) {
                 stream.service = this;
             }
-            stream.type = type;
             stream.selector = selector;
             // Get the data from a child service or from raw data.
-            if (this.childServices.has(type)) {
-                this.childServices.get(type).getData(type, selector, stream);
+            if (this.childServices.has(selector.type)) {
+                this.childServices.get(selector.type).fetchData(selector, stream);
             } else {
-                this.getRawData(stream)
+                this.fetchRawData(stream);
             }
             // Return the passed in or created stream.
             return stream;
@@ -132,10 +160,10 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
     },
 
     /**
-     * Get the raw data used by this service.
+     * Fetch the raw data used by this service.
      *
-     * Subclasses override this method to provide the raw data on which they
-     * depend.
+     * Subclasses should override this method to provide the raw data on which
+     * they depend.
      *
      * This class' implementation simply calls
      * [rawDataDone()]{@link DataService#rawDataDone} immediately
@@ -144,23 +172,27 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * @argument {DataStream} stream     - The stream to which the data objects
      *                                     corresponding to the raw data should
      *                                     be added. This stream contains
-     *                                     references to the type and selector
-     *                                     defining which raw data to get.
+     *                                     references to the selector defining
+     *                                     which raw data to fetch.
      */
-    getRawData: {
+    fetchRawData: {
         value: function (stream) {
-            this.rawDataDone(stream)
+            this.rawDataDone(stream);
         }
     },
 
     /**
-     * To be called by [getRawData()]{@link DataService#getRawData} when raw
+     * To be called by [fetchRawData()]{@link DataService#fetchRawData} when raw
      * data is received.
      *
      * This method maps the raw data to data objects using the specified
      * service's [mapping]{@link DataService#mapping}, registers those objects
      * with the service so it can manage them, and then adds those objects to
      * the specified stream.
+     *
+     * Subclasses should not override this method, they should instead override
+     * their [mapping]{@link DataService#mapping}'s
+     * [mapRawData]{@link DataMapping#mapRawData}.
      *
      * @method
      * @argument {DataStream} stream   - The stream to which the data objects
@@ -189,16 +221,101 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * added to that stream.
      *
      * Subclasses must call this method once with appropriate values for each
-     * [getRawData()]{@link DataService#getRawData} call they receive.
+     * [fetchRawData()]{@link DataService#fetchRawData} call they receive.
      *
      * @method
-     * @argument {DataStream} stream -   The stream to which the data objects
-     *                                   corresponding to the raw data have been
-     *                                   added.
+     * @argument {DataStream} stream - The stream to which the data objects
+     *                                 corresponding to the raw data have been
+     *                                 added.
      */
     rawDataDone: {
         value: function (stream) {
             stream.dataDone();
+        }
+    },
+
+    /**
+     * Request possibly asynchronous values for a set of properties.
+     *
+     * @method
+     * @argument {object} object   - The object whose property values are
+     *                               requested.
+     * @argument {string[]} names  - The names of each of the properties whose
+     *                               values are requested. These can be provided
+     *                               as an array of strings or as a list of
+     *                               string arguments following the object
+     *                               argument.
+     * @returns {external:Promise} - A promise fulfilled when all of the
+     * requested property values have been set. The argument passed to the
+     * promise callback will be the object whose property values are requested.
+     */
+    getProperties: {
+        value: function (object, names) {
+            var promiseArray = [],
+                promiseSet = new Set(),
+                promise;
+            // Allow names to be provided as an array or as a list of arguments.
+            if (!Array.isArray(names)) {
+                names = Array.prototype.splice.call(arguments, 1);
+            }
+            // Request each value separately.
+            for (i = 0, n = names.length; i &lt; n; ++i) {
+                promise = this._getProperty(object, names[i]);
+                if (promise &amp;&amp; !promiseSet.has(promise)) {
+                    promiseArray.push(promise);
+                    promiseSet.add(promise);
+                }
+            }
+            // Return a promise that will be fulfilled when all of the values
+            // have been set.
+            return promises.size === 0 ? Promise.resolve(object) :
+                   promises.size === 1 ? promiseArray[0] :
+                                         Promise.all(promiseArray);
+        }
+    },
+
+    /**
+     * Request the possibly asynchronous value of a single property.
+     *
+     * @private
+     * @method
+     * @argument {object} object    - The object whose property value is
+     *                                requested.
+     * @argument {string} name      - The names of the property whose value is
+     *                                requested.
+     * @returns {?external:Promise} - A promise fulfilled when the requested
+     * property value has been set, or null if the property value is already
+     * set. If a promise is returned, the argument passed to that promise's
+     * callback will be the object whose property's value was requested.
+     */
+    _getProperty: {
+        value: function (object, name) {
+            // TODO: Looking at the object, find out if this value has been set.
+            // If so, return null. If not, look for the corresponding
+            // relationship in the model and check if this relationships is
+            // already being fetched. If so, return the promise for that fetch.
+            // If not, schedule the fetch to be done at the next tick of the
+            // event loop and return a promise that is fulfilled when the fetch
+            // is done and when the returned values has been set.
+            return Promise.resolve(object);
+        }
+    }
+
+}, {
+
+    rootService: {
+        get: function () {
+            // Tries to find the root service if by any chance the service
+            // recorded as the root service isn't a root service.
+            if (this._rootService) {
+                while (this._rootService.parentService) {
+                    this._rootService = this._rootService.parentService;
+                }
+            }
+            return this._rootService;
+        },
+        set: function (service) {
+            this._rootService = service;
         }
     }
 
@@ -213,13 +330,13 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 12:27:57 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

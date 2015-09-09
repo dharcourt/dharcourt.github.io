@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line11">line 11</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -154,7 +154,7 @@
 
 
 <div class="description">
-    <p>Map of child services used to get and manage types of objects not
+    <p>Map of child services used to fetch and manage types of objects not
 directly obtained or managed by this service.</p>
 <p>Values can be added or removed from the map but the map itself cannot be
 replaced.</p>
@@ -205,7 +205,7 @@ replaced.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line34">line 34</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line53">line 53</a>
     </li></ul></dd>
     
 
@@ -287,7 +287,7 @@ convert the raw data.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line52">line 52</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line71">line 71</a>
     </li></ul></dd>
     
 
@@ -360,7 +360,7 @@ convert the raw data.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line19">line 19</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -387,6 +387,189 @@ convert the raw data.</p>
 
     
 
+    <h4 class="name" id="_getProperty"><span class="type-signature">(private) </span>_getProperty<span class="signature">(object, name)</span><span class="type-signature"> &rarr; (nullable) {<a href="external-Promise.html">external:Promise</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Request the possibly asynchronous value of a single property.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The object whose property value is
+                               requested.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The names of the property whose value is
+                               requested.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line263">line 263</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>A promise fulfilled when the requested
+property value has been set, or null if the property value is already
+set. If a promise is returned, the argument passed to that promise's
+callback will be the object whose property's value was requested.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="external-Promise.html">external:Promise</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="addRawData"><span class="type-signature"></span>addRawData<span class="signature">(stream, objects)</span><span class="type-signature"></span></h4>
 
     
@@ -394,12 +577,15 @@ convert the raw data.</p>
 
 
 <div class="description">
-    <p>To be called by <a href="DataService.html#getRawData"><code>getRawData()</code></a> when raw
+    <p>To be called by <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> when raw
 data is received.</p>
 <p>This method maps the raw data to data objects using the specified
 service's <a href="DataService.html#mapping"><code>mapping</code></a>, registers those objects
 with the service so it can manage them, and then adds those objects to
 the specified stream.</p>
+<p>Subclasses should not override this method, they should instead override
+their <a href="DataService.html#mapping"><code>mapping</code></a>'s
+<a href="DataMapping.html#mapRawData"><code>mapRawData</code></a>.</p>
 </div>
 
 
@@ -519,7 +705,7 @@ the specified stream.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line145">line 145</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line177">line 177</a>
     </li></ul></dd>
     
 
@@ -550,21 +736,109 @@ the specified stream.</p>
 
     
 
-    <h4 class="name" id="getData"><span class="type-signature"></span>getData<span class="signature">(type, selector, stream)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="constructor"><span class="type-signature"></span>constructor<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Get data from the service. This is the main method used by clients of
+    <p>Sets the first created service as the root service. Subclasses
+implementing a constructor should call this constructor at the beginning
+of their constructor.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fetchData"><span class="type-signature"></span>fetchData<span class="signature">(selector, stream)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fetch data from the service. This is the main method used by clients of
 this service.</p>
-<p>This method gets raw data from a server or other source using the
-<a href="DataService.html#getRawData"><code>getRawData()</code></a> method, maps that data to
-data objects that fit into an application's data model using the
+<p>This method fetches raw data from a server or other source using the
+<a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> method, maps that data
+to data objects that fit into an application's data model using the
 service's <a href="DataService.html#mapping"><code>mapping</code></a>, registers those objects
 so the service can manage them, and then return those objects in the
 specified stream or in a new stream created for this purpose.</p>
+<p>Subclasses should not override this method, they should instead override
+<a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> and their
+<a href="DataService.html#mapping"><code>mapping</code></a>'s
+<a href="DataMapping.html#mapRawData"><code>mapRawData</code></a>.</p>
 </div>
 
 
@@ -600,29 +874,6 @@ specified stream or in a new stream created for this purpose.</p>
 
         <tr>
             
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="ObjectDescriptor.html">ObjectDescriptor</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The type of the data requested.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>selector</code></td>
             
 
@@ -639,8 +890,7 @@ specified stream or in a new stream created for this purpose.</p>
 
             
 
-            <td class="description last"><p>Criteria that the returned data
-                                    objects must satisfy.</p></td>
+            <td class="description last"><p>Defines what data should be returned.</p></td>
         </tr>
 
     
@@ -707,7 +957,7 @@ specified stream or in a new stream created for this purpose.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line84">line 84</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line106">line 106</a>
     </li></ul></dd>
     
 
@@ -738,16 +988,16 @@ specified stream or in a new stream created for this purpose.</p>
 
     
 
-    <h4 class="name" id="getRawData"><span class="type-signature"></span>getRawData<span class="signature">(stream)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="fetchRawData"><span class="type-signature"></span>fetchRawData<span class="signature">(stream)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Get the raw data used by this service.</p>
-<p>Subclasses override this method to provide the raw data on which they
-depend.</p>
+    <p>Fetch the raw data used by this service.</p>
+<p>Subclasses should override this method to provide the raw data on which
+they depend.</p>
 <p>This class' implementation simply calls
 <a href="DataService.html#rawDataDone"><code>rawDataDone()</code></a> immediately</p>
 </div>
@@ -804,8 +1054,8 @@ depend.</p>
             <td class="description last"><p>The stream to which the data objects
                                     corresponding to the raw data should
                                     be added. This stream contains
-                                    references to the type and selector
-                                    defining which raw data to get.</p></td>
+                                    references to the selector defining
+                                    which raw data to fetch.</p></td>
         </tr>
 
     
@@ -846,7 +1096,7 @@ depend.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line122">line 122</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line150">line 150</a>
     </li></ul></dd>
     
 
@@ -877,6 +1127,191 @@ depend.</p>
 
     
 
+    <h4 class="name" id="getProperties"><span class="type-signature"></span>getProperties<span class="signature">(object, names)</span><span class="type-signature"> &rarr; {<a href="external-Promise.html">external:Promise</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Request possibly asynchronous values for a set of properties.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The object whose property values are
+                              requested.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>names</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The names of each of the properties whose
+                              values are requested. These can be provided
+                              as an array of strings or as a list of
+                              string arguments following the object
+                              argument.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line224">line 224</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>A promise fulfilled when all of the
+requested property values have been set. The argument passed to the
+promise callback will be the object whose property values are requested.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="external-Promise.html">external:Promise</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="rawDataDone"><span class="type-signature"></span>rawDataDone<span class="signature">(stream)</span><span class="type-signature"></span></h4>
 
     
@@ -887,7 +1322,7 @@ depend.</p>
     <p>Indicate that all the raw data meant for the specified stream has been
 added to that stream.</p>
 <p>Subclasses must call this method once with appropriate values for each
-<a href="DataService.html#getRawData"><code>getRawData()</code></a> call they receive.</p>
+<a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> call they receive.</p>
 </div>
 
 
@@ -940,8 +1375,8 @@ added to that stream.</p>
             
 
             <td class="description last"><p>The stream to which the data objects
-                                  corresponding to the raw data have been
-                                  added.</p></td>
+                                corresponding to the raw data have been
+                                added.</p></td>
         </tr>
 
     
@@ -982,7 +1417,7 @@ added to that stream.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line171">line 171</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line203">line 203</a>
     </li></ul></dd>
     
 
@@ -1024,13 +1459,13 @@ added to that stream.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 12:27:57 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

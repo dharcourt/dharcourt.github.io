@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: logic/model/property-descriptor.js</title>
+    <title>JSDoc: Source: logic/model/relationship-descriptor.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: logic/model/property-descriptor.js</h1>
+    <h1 class="page-title">Source: logic/model/relationship-descriptor.js</h1>
 
     
 
@@ -30,21 +30,57 @@
     Montage = require("montage").Montage;
 
 /**
- * Describes one property of a type of object.
+ * Describes a relationship between objects of a certain type and related
+ * objects or other related data.
  *
  * @class
  * @extends external:Montage
  */
-exports.PropertyDescriptor = Montage.specialize(/** @lends PropertyDescriptor# */{
+exports.RelationshipDescriptor = Montage.specialize(/** @lends RelationshipDescriptor# */{
 
     /**
-     * The relationship through with this property's value is obtained, if it is
-     * obtained through a relationship.
+     * The type of the objects that will be returned by the relationship.
      *
-     * @type {string}
+     * @type {ObjectDescriptor}
      */
-    relationship: {
+    destinationType: {
         value: undefined
+    },
+
+    /**
+     * The values to be set by the relationship on objects having the
+     * relationship. These values are expressed in terms of the names of the
+     * properties whose values are to be set, and for each of these names an
+     * [FRB expression]{@link external:FrbExpression} defining how the
+     * corresponding property value will be obtained. Each of these expressions
+     * will be evaluated within the scope of the objects returned by the
+     * relationship to get the property value.
+     *
+     * The object provided by this property should not be modified by any object
+     * other than {@link RelationshipDescriptor}.
+     *
+     * @type {Object.&lt;string, external:FrbExpression>}
+     */
+    valueExpressions: {
+        value: {}
+    },
+
+    /**
+     * The criteria to set on the selector used to fetch the objects returned
+     * by this relationship. These criteria are expressed in terms of the names
+     * of the criteria to set on the selector, and for each of these names an
+     * [FRB expression]{@link external:FrbExpression} defining how the
+     * corresponding criteria value will be obtained. Each of these expressions
+     * will be evaluated within the scope of objects having the relationship to
+     * get the criteria value.
+     *
+     * The object provided by this property should not be modified by any object
+     * other than {@link RelationshipDescriptor}.
+     *
+     * @type {Object.&lt;string, external:FrbExpression>}
+     */
+    criteriaExpressions: {
+        value: {}
     }
 
 });

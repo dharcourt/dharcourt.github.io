@@ -98,7 +98,7 @@ for objects described by instances of this class.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line15">line 15</a>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line18">line 18</a>
     </li></ul></dd>
     
 
@@ -153,14 +153,13 @@ for objects described by instances of this class.</p>
 
         
             
-<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :String</span></h4>
+<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
 
 
 
 
 <div class="description">
-    <p>The name of the type of object described by this descriptor. Names must
-be globally unique with each different type having a different name.</p>
+    <p>The name of the type of object described by this descriptor.</p>
 </div>
 
 
@@ -169,7 +168,7 @@ be globally unique with each different type having a different name.</p>
     <ul>
         <li>
             
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
         </li>
@@ -208,7 +207,7 @@ be globally unique with each different type having a different name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line23">line 23</a>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -226,13 +225,15 @@ be globally unique with each different type having a different name.</p>
 
         
             
-<h4 class="name" id="properties"><span class="type-signature"></span>properties<span class="type-signature"> :Object.&lt;String, <a href="PropertyDescriptor.html">PropertyDescriptor</a>></span></h4>
+<h4 class="name" id="properties"><span class="type-signature"></span>properties<span class="type-signature"> :Object.&lt;string, <a href="PropertyDescriptor.html">PropertyDescriptor</a>></span></h4>
 
 
 
 
 <div class="description">
     <p>Descriptors of the properties of this type of object, by property name.</p>
+<p>The object provided by this property should not be modified by any object
+other than <a href="ObjectDescriptor.html"><code>ObjectDescriptor</code></a>.</p>
 </div>
 
 
@@ -241,7 +242,7 @@ be globally unique with each different type having a different name.</p>
     <ul>
         <li>
             
-<span class="param-type">Object.&lt;String, <a href="PropertyDescriptor.html">PropertyDescriptor</a>></span>
+<span class="param-type">Object.&lt;string, <a href="PropertyDescriptor.html">PropertyDescriptor</a>></span>
 
 
         </li>
@@ -280,7 +281,7 @@ be globally unique with each different type having a different name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line41">line 41</a>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line61">line 61</a>
     </li></ul></dd>
     
 
@@ -299,6 +300,619 @@ be globally unique with each different type having a different name.</p>
         
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="_addTrigger"><span class="type-signature">(private) </span>_addTrigger<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_addTriggers"><span class="type-signature">(private) </span>_addTriggers<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line102">line 102</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_removeTrigger"><span class="type-signature">(private) </span>_removeTrigger<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line154">line 154</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_removeTriggers"><span class="type-signature">(private) </span>_removeTriggers<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_triggerGet"><span class="type-signature">(private) </span>_triggerGet<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line169">line 169</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_triggerSet"><span class="type-signature">(private) </span>_triggerSet<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line186">line 186</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="addRelationship"><span class="type-signature"></span>addRelationship<span class="signature">(definition)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Convenience method to define a relationship without having to manually
+create a <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</code></a> or one or more
+<a href="PropertyDescriptor.html"><code>PropertyDescriptors</code></a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>definition</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An object defining the relationship by
+                                providing values for the
+                                <a href="RelationshipDescriptor.html#destinationType"><code>destinationType</code></a>,
+                                <code>valueExpressions</code>,
+                                and
+                                <a href="RelationshipDescriptor.html#criteriaExpressions"><code>criteriaExpressions</code></a>
+                                properties in the
+                                <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</code></a> that will
+                                be created by this method.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line81">line 81</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     
@@ -314,13 +928,13 @@ be globally unique with each different type having a different name.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 12:27:57 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -49,7 +49,8 @@
 
 
 <div class="description">
-    <p>Defines criteria that objects must satisfy to be included in a data set.</p>
+    <p>Defines the criteria that objects must satisfy to be included in a data set
+as well as other characteristics the data set must possess.</p>
 </div>
 
 
@@ -93,7 +94,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-selector.js.html">logic/service/data-selector.js</a>, <a href="logic_service_data-selector.js.html#line9">line 9</a>
+        <a href="logic_service_data-selector.js.html">logic/service/data-selector.js</a>, <a href="logic_service_data-selector.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -148,27 +149,14 @@
 
         
             
-<h4 class="name" id="expression"><span class="type-signature"></span>expression<span class="type-signature"> :Object</span></h4>
+<h4 class="name" id="criteria"><span class="type-signature"></span>criteria<span class="type-signature"> :Object</span></h4>
 
 
 
 
 <div class="description">
-    <p>Eventually selector expressions will be parsed from strings but for now
-they can only be defined as literal objects structured like the
-following:</p>
-<pre class="prettyprint source"><code>var selector = new DataSelector();
-selector.expression = {
-    property1: {&quot;=&quot;: 1},
-    property2: {&quot;>&quot;: 2, &quot;&lt;&quot;: 3},
-    property3: {&quot;>=&quot;: 3},
-    property4: {&quot;!=&quot;: 4}
-};</code></pre><p>This supports a small subset of the selector expressions expected to be
-valid in the future. Services are ultimately responsible for interpreting
-selector expressions and for determinging which expressions are valid
-but for now the operators that are expected to be valid in expression
-objects are:</p>
-<pre class="prettyprint source"><code>&quot;=&quot; || &quot;&lt;&quot; || &quot;>&quot; || &quot;&lt;=&quot; || &quot;>=&quot; || &quot;!=&quot;</code></pre>
+    <p>A set of named values defining the criteria that must be satisfied by
+objects for them to be included in the data set defined by this selector.</p>
 </div>
 
 
@@ -216,7 +204,79 @@ objects are:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-selector.js.html">logic/service/data-selector.js</a>, <a href="logic_service_data-selector.js.html#line34">line 34</a>
+        <a href="logic_service_data-selector.js.html">logic/service/data-selector.js</a>, <a href="logic_service_data-selector.js.html#line28">line 28</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="type"><span class="type-signature"></span>type<span class="type-signature"> :<a href="ObjectDescriptor.html">ObjectDescriptor</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>The type of the data object to retrieve.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="ObjectDescriptor.html">ObjectDescriptor</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-selector.js.html">logic/service/data-selector.js</a>, <a href="logic_service_data-selector.js.html#line18">line 18</a>
     </li></ul></dd>
     
 
@@ -250,13 +310,13 @@ objects are:</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 12:27:57 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

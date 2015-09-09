@@ -26,7 +26,10 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var Montage = require("montage").Montage;
+            <pre class="prettyprint source linenums"><code>var bootstrap = require("logic/bootstrap/bootstrap.js"),
+    Montage = require("montage").Montage,
+    PropertyDescriptor = require("logic/model/property-descriptor").PropertyDescriptor,
+    RelationshipDescriptor = require("logic/model/relationship-descriptor").RelationshipDescriptor;
 
 /**
  * Describes a type of object.
@@ -43,13 +46,12 @@
 exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
 
     /**
-     * The name of the type of object described by this descriptor. Names must
-     * be globally unique with each different type having a different name.
+     * The name of the type of object described by this descriptor.
      *
-     * @type {String}
+     * @type {string}
      */
     name: {
-        value: null
+        value: undefined
     },
 
     /**
@@ -58,17 +60,167 @@ exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
      * @type {Object}
      */
     prototype: {
-        value: Object.prototype
+        get: function () {
+            if (!this._prototype) {
+                this._prototype = new Montage();
+            }
+            return this._prototype;
+        },
+        set: function (prototype) {
+            prototype = prototype || new Montage();
+            if (prototype !== this._prototype &amp;&amp; this._prototype) {
+                this._removeTriggers(Object.keys(this.properties));
+            }
+            if (prototype !== this._prototype) {
+                this._prototype = prototype;
+                this._addTriggers(Object.keys(this.properties));
+            }
+        }
     },
 
     /**
      * Descriptors of the properties of this type of object, by property name.
      *
-     * @type {Object.&lt;String, PropertyDescriptor>}
+     * The object provided by this property should not be modified by any object
+     * other than {@link ObjectDescriptor}.
+     *
+     * @type {Object.&lt;string, PropertyDescriptor>}
      */
     properties: {
         value: {}
-    }
+    },
+
+    /**
+     * Convenience method to define a relationship without having to manually
+     * create a {@link RelationshipDescriptor} or one or more
+     * [PropertyDescriptors]{@link PropertyDescriptor}.
+     *
+     * @method
+     * @argument {Object} definition - An object defining the relationship by
+     *                                 providing values for the
+     *                                 [destinationType]{@link RelationshipDescriptor#destinationType},
+     *                                 [valueExpressions]{@link RelationshipDescriptor#valueExpression},
+     *                                 and
+     *                                 [criteriaExpressions]{@link RelationshipDescriptor#criteriaExpressions}
+     *                                 properties in the
+     *                                 {@link RelationshipDescriptor} that will
+     *                                 be created by this method.
+     */
+    addRelationship: {
+        value: function (definition) {
+            var relationship = new RelationshipDescriptor(),
+                keys = Object.keys(definition.valueExpressions),
+                property, i, n;
+            relationship.destinationType = definition.destinationType;
+            relationship.valueExpressions = definition.valueExpressions;
+            relationship.criteriaExpressions = definition.criteriaExpressions;
+            for (i = 0, n = keys.length; i &lt; n; ++i) {
+                property = new PropertyDescriptor();
+                property.relationship = relationship;
+                this.properties[keys[i]] = property;
+                this._addTrigger(keys[i]);
+            }
+        }
+    },
+
+    /**
+     * @private
+     * @method
+     */
+     _addTriggers: {
+        value: function (names) {
+            var property, i, n;
+            for (i = 0, n = names.length; i &lt; n; ++i) {
+                property = this.properties[names[i]];
+                if (property &amp;&amp; property.relationship) {
+                    this._addTrigger(names[i]);
+                }
+            }
+        }
+     },
+
+    /**
+     * @private
+     * @method
+     */
+     _addTrigger: {
+        value: function (name, property) {
+            var self = this,
+                replaced = Object.getOwnPropertyDescriptor(this.prototype, name),
+                replacement = {
+                    get: function () {
+                        self._triggerGet.call(self, this, name);
+                    },
+                    set: function (value) {
+                        self._triggerSet.call(self, this, name, value);
+                    },
+                    enumerable: true
+                };
+            Montage.defineProperty(this.prototype, name, replacement);
+            this._triggerReplaceds = this._triggerReplaceds || new WeakMap();
+            this._triggerReplaceds.set(replacement.get, replaced);
+        }
+     },
+
+    /**
+     * @private
+     * @method
+     */
+     _removeTriggers: {
+        value: function (names) {
+            var i, n;
+            for (i = 0, n = names.length; i &lt; n; ++i) {
+                this._removeTrigger(names[i]);
+            }
+        }
+     },
+
+    /**
+     * @private
+     * @method
+     */
+     _removeTrigger: {
+        value: function (name) {
+            var replacement = Object.getOwnPropertyDescriptor(this.prototype, name);
+                replaced = replacement &amp;&amp; this._triggerReplaceds &amp;&amp; this._triggerReplaceds.get(replacement.get);
+            if (replaced) {
+                Montage.defineProperty(this.prototype, name, replaced);
+                this._triggerReplaceds.delete(replacement.get);
+            }
+        }
+     },
+
+    /**
+     * @private
+     * @method
+     */
+     _triggerGet: {
+        value: function (object, name) {
+            // Let a service fetch this property's value asynchronously.
+            DataService.rootService._getProperty(object, name);
+            // Now that the value is being fetched, remove the trigger to
+            // prevent multiple fetches.
+            this._removeTrigger(name);
+            // Now that the trigger is removed the following is sufficient to
+            // get the property's current value (usually undefined).
+            return object[name];
+        }
+     },
+
+    /**
+     * @private
+     * @method
+     */
+     _triggerSet: {
+        value: function (object, name, value) {
+            // Remove this trigger since we don't want the value set here to be
+            // later overridden by a triggerred fetch.
+            this._removeTrigger(name);
+            // Now that the trigger is removed the following is sufficient to
+            // set the property's value.
+            object[name] = value;
+        }
+     }
 
 });
 </code></pre>
@@ -81,13 +233,13 @@ exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Sep 01 2015 12:27:57 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
