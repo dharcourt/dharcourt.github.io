@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: logic/service/rest-service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: logic/service/rest-service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var DataService = require("logic/service/data-service").DataService,
+    DataSelector = require("logic/service/data-selector").DataSelector,
+    Map = require("collections/map"),
+    Promise = require("bluebird");
+
+/**
+ * Provides utility methods for REST services.
+ *
+ * @class
+ * @extends external:DataService
+ */
+exports.RestService = DataService.specialize(/** @lends RestService# */{
+
+    getDataFetchPromise: {
+        value: function (type, object, propertyName, prerequisitePropertyNames, criteria) {
+            var self = this;
+            // Create and cache a new fetch promise if necessary.
+            if (!this._getCachedFetchPromise(object, propertyName)) {
+                // Parse arguments.
+                criteria = arguments[arguments.length - 1];
+                if (arguments.length &lt; 5 || !prerequisitePropertyNames) {
+                    prerequisitePropertyNames = [];
+                } else if (!Array.isArray(prerequisitePropertyNames)) {
+                    prerequisitePropertyNames = Array.prototype.slice.call(arguments, 3, -1);
+                }
+                // Create and cache a new fetch promise
+                this._setCachedFetchPromise(object, propertyName, this.nullPromise.then(function () {
+                    // First get prerequisite data if necessary...
+                    return self.rootService.getObjectData(object, prerequisitePropertyNames);
+                }).then(function () {
+                    // Then fetch the requested data...
+                    return self.rootService.fetchData(DataSelector.withTypeAndCriteria(type, criteria));
+                }).then(function (data) {
+                    // Then waits until the next event loop to ensure only one
+                    // fetch is dispatched per event loop (caching ensures all
+                    // subsequent requests for the same fetch promise within the
+                    // same event loop will return the same promise)...
+                    return self._makeEventLoopPromise(data);
+                }).then(function (data) {
+                    // Then removes the promise from the cache so subsequent
+                    // requests for this fetch promise generate new fetches.
+                    self._setCachedFetchPromise(object, propertyName, null);
+                    return data;
+                }));
+
+            }
+            // Return the created or cached fetch promise.
+            return this._getCachedFetchPromise(object, propertyName);
+        }
+    },
+
+    _getCachedFetchPromise: {
+        value: function (object, name) {
+            this._cachedFetchPromises = this._cachedFetchPromises || {};
+            this._cachedFetchPromises[name] = this._cachedFetchPromises[name] || new Map();
+            return this._cachedFetchPromises[name].get(object);
+        }
+    },
+
+    _setCachedFetchPromise: {
+        value: function (object, name, promise) {
+            this._cachedFetchPromises = this._cachedFetchPromises || {};
+            this._cachedFetchPromises[name] = this._cachedFetchPromises[name] || new Map();
+            this._cachedFetchPromises[name].set(object, promise);
+        }
+    },
+
+    getRawDataFetchPromise: {
+        value: function (url) {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var request;
+                // Fetch the requested raw data.
+                if (url) {
+                    request = new XMLHttpRequest();
+                    request.onload = function () { resolve(request); };
+                    request.open("GET", url, true);
+                    request.withCredentials = true;
+                    request.send();
+                } else {
+                    reject(new Error("Undefined URL"));
+                }
+            }).then(function (request) {
+                // The response status can be 0 initially even for successful
+                // requests, so defer the processing of this response until the
+                // next event loop to give the status time to be set correctly.
+                return self._makeEventLoopPromise(request);
+            }).then(function (request) {
+                // Log a warning and return null for error status responses.
+                var response = request.responseText;
+                if (request.status >= 300) {
+                    console.warn(new Error("Status " + request.status + " for " + url));
+                    response = null;
+                }
+                return self.parseJson(response);
+            });
+        }
+    },
+
+    _makeEventLoopPromise: {
+        value: function (value) {
+            return new Promise(function (resolve, reject) {
+                window.setTimeout(function () {
+                    resolve(value);
+                }, 0);
+            });
+        }
+    },
+
+    parseJson: {
+        value: function (json) {
+            var parsed;
+            try {
+                parsed = json &amp;&amp; JSON.parse(json);
+            } catch (error) {
+                console.trace("Can't parse JSON -", json);
+            }
+            return parsed;
+        }
+    }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

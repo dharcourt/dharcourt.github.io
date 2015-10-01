@@ -50,11 +50,12 @@
 
 <div class="description">
     <p>Describes a type of object.</p>
-<p>Because of <a href="https://github.com/jsdoc3/jsdoc/issues/1049">an issue</a>
-with JSDoc the <code>prototype</code> property of this class will not appear in the
-JSDoc generated documentation for this class. This property does exist,
-however. It is of type <code>Object</code> and is a reference to the prototype to use
-for objects described by instances of this class.</p>
+<p>Because of
+<a href="https://github.com/jsdoc3/jsdoc/issues/1049">an issue with JSDoc</a>
+the <code>prototype</code> property of this class may not appear in the JSDoc generated
+documentation for this class. This property does exist, however. It is of
+type <code>Object</code> and is a reference to the prototype to use for objects
+described by instances of this class.</p>
 </div>
 
 
@@ -207,7 +208,7 @@ for objects described by instances of this class.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line25">line 25</a>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line31">line 31</a>
     </li></ul></dd>
     
 
@@ -231,9 +232,11 @@ for objects described by instances of this class.</p>
 
 
 <div class="description">
-    <p>Descriptors of the properties of this type of object, by property name.</p>
-<p>The object provided by this property should not be modified by any object
-other than <a href="ObjectDescriptor.html"><code>ObjectDescriptor</code></a>.</p>
+    <p>Descriptors of the properties of objects of this type, by property name.</p>
+<p>The returned object should not be modified and
+<a href="ObjectDescriptor.html#addProperty"><code>addProperty</code></a> or
+<a href="ObjectDescriptor.html#removeProperty"><code>removeProperty</code></a> should be used
+instead to modify the properties.</p>
 </div>
 
 
@@ -281,7 +284,7 @@ other than <a href="ObjectDescriptor.html"><code>ObjectDescriptor</code></a>.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line61">line 61</a>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -308,484 +311,18 @@ other than <a href="ObjectDescriptor.html"><code>ObjectDescriptor</code></a>.</p
 
     
 
-    <h4 class="name" id="_addTrigger"><span class="type-signature">(private) </span>_addTrigger<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line118">line 118</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="_addTriggers"><span class="type-signature">(private) </span>_addTriggers<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line102">line 102</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="_removeTrigger"><span class="type-signature">(private) </span>_removeTrigger<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line154">line 154</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="_removeTriggers"><span class="type-signature">(private) </span>_removeTriggers<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line141">line 141</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="_triggerGet"><span class="type-signature">(private) </span>_triggerGet<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line169">line 169</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="_triggerSet"><span class="type-signature">(private) </span>_triggerSet<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line186">line 186</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="addRelationship"><span class="type-signature"></span>addRelationship<span class="signature">(definition)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".getterFor"><span class="type-signature">(static) </span>getterFor<span class="signature">(exports, name, relationships)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Convenience method to define a relationship without having to manually
-create a <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</code></a> or one or more
-<a href="PropertyDescriptor.html"><code>PropertyDescriptors</code></a>.</p>
+    <p>Convenience method to generate a getter function that will create and
+then cache the object descriptor corresponding to a constructor. The
+object descriptors will be created with non-relationship properties taken
+from the properties of the constructor's prototype and with the
+relationships specified.</p>
 </div>
 
 
@@ -821,7 +358,7 @@ create a <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</cod
 
         <tr>
             
-                <td class="name"><code>definition</code></td>
+                <td class="name"><code>exports</code></td>
             
 
             <td class="type">
@@ -837,15 +374,69 @@ create a <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</cod
 
             
 
-            <td class="description last"><p>An object defining the relationship by
-                                providing values for the
-                                <a href="RelationshipDescriptor.html#destinationType"><code>destinationType</code></a>,
-                                <code>valueExpressions</code>,
-                                and
-                                <a href="RelationshipDescriptor.html#criteriaExpressions"><code>criteriaExpressions</code></a>
-                                properties in the
-                                <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</code></a> that will
-                                be created by this method.</p></td>
+            <td class="description last"><p>A Montage Require exports object
+                                   defining the constructor.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name with which the constructor is
+                                   defined in the exports, which will be
+                                   used as the name of the type.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>relationships</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An object whose property names are the
+                                   names of the relationships to add and
+                                   whose property values are objects with
+                                   values for the
+                                   <a href="RelationshipDescriptor.html#destinationType"><code>destinationType</code></a>,
+                                   <a href="RelationshipDescriptor.html#targetProperties"><code>targetProperties</code></a>,
+                                   and
+                                   <a href="RelationshipDescriptor.html#criteriaExpressions"><code>criteriaExpressions</code></a>
+                                   properties of the
+                                   <a href="RelationshipDescriptor.html"><code>RelationshipDescriptors</code></a>
+                                   to create for each relationship.
+                                   If any destinationType is null the
+                                   corresponding relationship will be
+                                   created from this type to itself.</p></td>
         </tr>
 
     
@@ -886,7 +477,171 @@ create a <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</cod
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line81">line 81</a>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line199">line 199</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="addProperty"><span class="type-signature"></span>addProperty<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Add or replace a property descriptor of this object descriptor.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line72">line 72</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="removeProperty"><span class="type-signature"></span>removeProperty<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Remove a property descriptor of this object descriptor.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_object-descriptor.js.html">logic/model/object-descriptor.js</a>, <a href="logic_model_object-descriptor.js.html#line83">line 83</a>
     </li></ul></dd>
     
 
@@ -928,13 +683,13 @@ create a <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</cod
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

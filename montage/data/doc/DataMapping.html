@@ -50,10 +50,12 @@
 
 <div class="description">
     <p>Maps raw data to data objects of a specific type.</p>
-<p>Currently services have to subclass this and override its
-<code>mapData()</code> method to define their mapping. In the
-future mappings will be defined declaratively through mapping descriptors
-read from blueprint files.</p>
+<p>Currently services define their mapping by overriding their
+<a href="DataService.html#mapRawData"><code>mapRawData()</code></a> method or by using a
+<a href="DataMapping.html"><code>DataMapping</code></a> subclass that overrides its
+<a href="DataMapping.html#mapRawData"><code>mapRawData()</code></a> method. In the future it will be
+possible to define mappings declaratively through mapping descriptors read
+from blueprint files.</p>
 </div>
 
 
@@ -97,7 +99,7 @@ read from blueprint files.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-mapping.js.html">logic/service/data-mapping.js</a>, <a href="logic_service_data-mapping.js.html#line15">line 15</a>
+        <a href="logic_service_data-mapping.js.html">logic/service/data-mapping.js</a>, <a href="logic_service_data-mapping.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -157,7 +159,7 @@ read from blueprint files.</p>
 
     
 
-    <h4 class="name" id="mapRawData"><span class="type-signature"></span>mapRawData<span class="signature">(rawObject)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="mapRawData"><span class="type-signature"></span>mapRawData<span class="signature">(dataObject, rawData, context)</span><span class="type-signature"></span></h4>
 
     
 
@@ -165,23 +167,15 @@ read from blueprint files.</p>
 
 <div class="description">
     <p>Convert raw data to data objects of an appropriate type.</p>
-<p>Subclasses should override this method to create an object of the right
-type with values taken from the passed in raw object. The
-<a href="external-specialize.html"><code>specialize()</code></a> method of the prototype of
-the desired object type can be used for this, as in the following:</p>
+<p>Subclasses should override this method to map properties of the raw data
+to data objects, as in the following:</p>
 <pre class="prettyprint source"><code>mapRawData: {
-    value: function (rawObject) {
-        return MyType.prototype.specialize({
-            firstName: {
-                value: rawObject.GIVEN_NAME
-            }
-            lastName: {
-                value: rawObject.FAMILY_NAME
-            }
-        });
+    value: function (dataObject, rawData) {
+        dataObject.firstName = rawData.GIVEN_NAME;
+        dataObject.lastName = rawData.FAMILY_NAME;
     }
-}</code></pre><p>The default implementation of this method returns the raw object
-unmodified.</p>
+}</code></pre><p>The default implementation of this method copies the properties defined
+by the raw data object to the data object.</p>
 </div>
 
 
@@ -217,7 +211,32 @@ unmodified.</p>
 
         <tr>
             
-                <td class="name"><code>rawObject</code></td>
+                <td class="name"><code>dataObject</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An object whose properties will be
+                                set or modified to represent the data
+                                define in rawData.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rawData</code></td>
             
 
             <td class="type">
@@ -234,7 +253,32 @@ unmodified.</p>
             
 
             <td class="description last"><p>An object whose properties hold the raw
-                               data. This object may be modified.</p></td>
+                                data.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">?</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A value that was passed in to the
+                                <a href="DataService.html#mapRawData"><code>DataService mapRawData()</code></a>
+                                call that invoked this method.</p></td>
         </tr>
 
     
@@ -275,7 +319,7 @@ unmodified.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-mapping.js.html">logic/service/data-mapping.js</a>, <a href="logic_service_data-mapping.js.html#line45">line 45</a>
+        <a href="logic_service_data-mapping.js.html">logic/service/data-mapping.js</a>, <a href="logic_service_data-mapping.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -317,13 +361,13 @@ unmodified.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

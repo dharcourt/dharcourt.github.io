@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: logic/service/data-trigger.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: logic/service/data-trigger.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Montage = require("montage").Montage,
+    WeakMap = require("collections/weak-map");
+
+/**
+ * Intercepts property getters and setters to trigger appropriate Montage Data
+ * actions.
+ *
+ * DataTriggers are simple JavaScript Objects subclasses rather than Montage
+ * subclasses because triggers would not use the Montage functionality but need
+ * to be a lightweight as possibly because a trigger will be created for each
+ * property of each model class.
+ *
+ * @private
+ * @class
+ * @extends Object
+ */
+exports.DataTrigger = function () {};
+
+exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger# */{
+
+    constructor: {
+        configurable: true,
+        writable: true,
+        value: exports.DataTrigger
+    },
+
+    /**
+     * @type {Object}
+     */
+    prototype: {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: undefined
+    },
+
+    /**
+     * @type {string}
+     */
+    name: {
+        enumerable: true,
+        configurable: true,
+        writable: true,
+        value: undefined
+    },
+
+    /**
+     * @private
+     * @type {string}
+     */
+    _prefixedName: {
+        configurable: true,
+        get: function () {
+            if (!this.__prefixedName &amp;&amp; this.name) {
+                this.__prefixedName = "_" + this.name;
+            }
+            return this.__prefixedName;
+        }
+    },
+
+    /**
+     * @type {Object&lt;string, external:Promise>}
+     */
+    promises: {
+        enumerable: true,
+        configurable: true,
+        get: function () {
+            if (!this._promises) {
+                this._promises = new WeakMap();
+            }
+            return this._promises;
+        }
+    },
+
+    /**
+     * @method
+     * @argument {Object} object
+     */
+    getPropertyValue: {
+        configurable: true,
+        writable: true,
+        value: function (object) {
+            var prototype, descriptor, getter;
+            // Start an asynchronous fetch of the property's value if necessary.
+            this.service.rootService.getPropertyData(object, this.name);
+            // Search the prototype chain for a getter for this property,
+            // starting just after the prototype that called this method.
+            prototype = Object.getPrototypeOf(this.prototype);
+            while (prototype) {
+                descriptor = Object.getOwnPropertyDescriptor(prototype, this.name);
+                getter = descriptor &amp;&amp; descriptor.get;
+                prototype = !getter &amp;&amp; Object.getPrototypeOf(prototype);
+            }
+            // Return the property's current value.
+            return getter ? getter.call(object) : object[this._prefixedName];
+        }
+     },
+
+    /**
+     * @method
+     * @argument {Object} object
+     * @argument {} value
+     */
+     setPropertyValue: {
+        configurable: true,
+        writable: true,
+        value: function (object, value) {
+            var prototype, descriptor, getter, setter, writable;
+            // Mark this value as fetched.
+            this.promises.set(object, this.service.nullPromise);
+            // Search the prototype chain for a setter for this property,
+            // starting just after the prototype that called this method.
+            prototype = Object.getPrototypeOf(this.prototype);
+            while (prototype) {
+                descriptor = Object.getOwnPropertyDescriptor(prototype, this.name);
+                getter = descriptor &amp;&amp; descriptor.get;
+                setter = getter &amp;&amp; descriptor.set;
+                writable = !descriptor || setter || descriptor.writable;
+                prototype = writable &amp;&amp; !setter &amp;&amp; Object.getPrototypeOf(prototype);
+            }
+            // Set the property's value if it is writable.
+            if (setter) {
+                setter.call(object, value);
+            } else if (writable) {
+                object[this._prefixedName] = value;
+            }
+        }
+     }
+
+});
+
+Object.defineProperties(exports.DataTrigger, /** @lends DataTrigger */{
+
+    /**
+     * @method
+     * @argument {DataService} service
+     * @argument {Object} prototype
+     * @returns {Object.&lt;string, DataTrigger>}
+     */
+    addTriggers: {
+        value: function (service, prototype) {
+            var triggers, trigger, name;
+            triggers = {};
+            for (name in service.type.properties) {
+                trigger = this.addTrigger(service, prototype, name);
+                if (trigger) {
+                    triggers[name] = trigger;
+                }
+            }
+            return triggers;
+        }
+     },
+
+    /**
+     * @method
+     * @argument {DataService} service
+     * @argument {Object} prototype
+     * @argument {string} name
+     * @returns {?DataTrigger}
+     */
+    addTrigger: {
+        value: function (service, prototype, name) {
+            var trigger;
+            if (service.type.properties[name] &amp;&amp; service.type.properties[name].isRelationship) {
+                trigger = Object.create(this._getTriggerPrototype(service));
+                trigger.prototype = prototype;
+                trigger.name = name;
+                Montage.defineProperty(prototype, name, {
+                    get: function () {
+                        return trigger.getPropertyValue(this);
+                    },
+                    set: function (value) {
+                        trigger.setPropertyValue(this, value);
+                    }
+                });
+            }
+            return trigger;
+        }
+    },
+
+    /**
+     * To avoid having each trigger contain a reference to the service it's
+     * working for, we make all triggers working for a particular service share
+     * a prototype that contains that reference. This reduces the memory
+     * footprint of triggers.
+     *
+     * @private
+     * @method
+     * @argument {DataService} service
+     */
+    _getTriggerPrototype: {
+        value: function (service) {
+            var prototype = this._triggerPrototypes &amp;&amp; this._triggerPrototypes.get(service);
+            if (!prototype) {
+                prototype = Object.create(this.prototype, {service: {value: service}});
+                this._triggerPrototypes = this._triggerPrototypes || new WeakMap();
+                this._triggerPrototypes.set(service, prototype);
+            }
+            return prototype;
+        }
+    },
+
+    /**
+     * @method
+     * @argument {Object.&lt;string, DataTrigger>} triggers
+     * @argument {Object} prototype
+     */
+    removeTriggers: {
+        value: function (triggers, prototype) {
+            var name;
+            for (name in triggers) {
+                this.removeTrigger(triggers[name], prototype, name);
+            }
+        }
+    },
+
+    /**
+     * @method
+     * @argument {DataTrigger} trigger
+     * @argument {Object} prototype
+     */
+    removeTrigger: {
+        value: function (trigger, prototype) {
+            if (trigger) {
+                delete prototype[trigger.name];
+            }
+        }
+    }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

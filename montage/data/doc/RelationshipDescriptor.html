@@ -49,8 +49,8 @@
 
 
 <div class="description">
-    <p>Describes a relationship between objects of a certain type and related
-objects or other related data.</p>
+    <p>Describes a relationship between a property of objects of a certain type and
+related objects or other related data.</p>
 </div>
 
 
@@ -94,7 +94,7 @@ objects or other related data.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line11">line 11</a>
+        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -155,15 +155,12 @@ objects or other related data.</p>
 
 
 <div class="description">
-    <p>The criteria to set on the selector used to fetch the objects returned
-by this relationship. These criteria are expressed in terms of the names
-of the criteria to set on the selector, and for each of these names an
+    <p>The criteria that define the objects fetched by this relationship. These
+criteria are expressed in terms of the names of the criteria to set on
+the fetch selector, and for each of these names an
 <a href="external-FrbExpression.html"><code>FRB expression</code></a> defining how the
-corresponding criteria value will be obtained. Each of these expressions
-will be evaluated within the scope of objects having the relationship to
-get the criteria value.</p>
-<p>The object provided by this property should not be modified by any object
-other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</code></a>.</p>
+corresponding criteria value will be obtained. These expressions will be
+evaluated within the scope of the objects that own the relationship.</p>
 </div>
 
 
@@ -211,7 +208,7 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line54">line 54</a>
+        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -235,7 +232,7 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
 
 
 <div class="description">
-    <p>The type of the objects that will be returned by the relationship.</p>
+    <p>The type of the objects that will be returned by this relationship.</p>
 </div>
 
 
@@ -283,7 +280,7 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line18">line 18</a>
+        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -301,22 +298,10 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
 
         
             
-<h4 class="name" id="valueExpressions"><span class="type-signature"></span>valueExpressions<span class="type-signature"> :Object.&lt;string, <a href="external-FrbExpression.html">external:FrbExpression</a>></span></h4>
+<h4 class="name" id="isRelationship"><span class="type-signature"></span>isRelationship<span class="type-signature"> :boolean</span></h4>
 
 
 
-
-<div class="description">
-    <p>The values to be set by the relationship on objects having the
-relationship. These values are expressed in terms of the names of the
-properties whose values are to be set, and for each of these names an
-<a href="external-FrbExpression.html"><code>FRB expression</code></a> defining how the
-corresponding property value will be obtained. Each of these expressions
-will be evaluated within the scope of the objects returned by the
-relationship to get the property value.</p>
-<p>The object provided by this property should not be modified by any object
-other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</code></a>.</p>
-</div>
 
 
 
@@ -324,7 +309,7 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
     <ul>
         <li>
             
-<span class="param-type">Object.&lt;string, <a href="external-FrbExpression.html">external:FrbExpression</a>></span>
+<span class="param-type">boolean</span>
 
 
         </li>
@@ -363,7 +348,83 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line36">line 36</a>
+        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="targetProperties"><span class="type-signature"></span>targetProperties<span class="type-signature"> :Array.&lt;string></span></h4>
+
+
+
+
+<div class="description">
+    <p>The names of any origin properties whose values will be set to the
+objects fetched by this relationships. Relationships set values in two
+ways: 1) They set or update properties of the objects they fetch;
+and 2) They can set or update properties of the object that owns the
+relationship. This array contains the names of the later properties.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;string></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_model_relationship-descriptor.js.html">logic/model/relationship-descriptor.js</a>, <a href="logic_model_relationship-descriptor.js.html#line37">line 37</a>
     </li></ul></dd>
     
 
@@ -397,13 +458,13 @@ other than <a href="RelationshipDescriptor.html"><code>RelationshipDescriptor</c
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

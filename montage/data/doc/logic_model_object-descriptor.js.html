@@ -26,24 +26,30 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var bootstrap = require("logic/bootstrap/bootstrap.js"),
-    Montage = require("montage").Montage,
+            <pre class="prettyprint source linenums"><code>var Montage = require("montage").Montage,
     PropertyDescriptor = require("logic/model/property-descriptor").PropertyDescriptor,
     RelationshipDescriptor = require("logic/model/relationship-descriptor").RelationshipDescriptor;
 
 /**
  * Describes a type of object.
  *
- * Because of [an issue]{@linkplain https://github.com/jsdoc3/jsdoc/issues/1049}
- * with JSDoc the `prototype` property of this class will not appear in the
- * JSDoc generated documentation for this class. This property does exist,
- * however. It is of type `Object` and is a reference to the prototype to use
- * for objects described by instances of this class.
+ * Because of
+ * [an issue with JSDoc]{@linkplain https://github.com/jsdoc3/jsdoc/issues/1049}
+ * the `prototype` property of this class may not appear in the JSDoc generated
+ * documentation for this class. This property does exist, however. It is of
+ * type `Object` and is a reference to the prototype to use for objects
+ * described by instances of this class.
  *
  * @class
  * @extends external:Montage
  */
-exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
+var ObjectDescriptor = exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
+
+    /***************************************************************************
+     * Public prototype properties (instance variables).
+     *
+     * Private properties are defined and/or documented where they are used.
+     */
 
     /**
      * The name of the type of object described by this descriptor.
@@ -60,167 +66,178 @@ exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
      * @type {Object}
      */
     prototype: {
-        get: function () {
-            if (!this._prototype) {
-                this._prototype = new Montage();
-            }
-            return this._prototype;
-        },
-        set: function (prototype) {
-            prototype = prototype || new Montage();
-            if (prototype !== this._prototype &amp;&amp; this._prototype) {
-                this._removeTriggers(Object.keys(this.properties));
-            }
-            if (prototype !== this._prototype) {
-                this._prototype = prototype;
-                this._addTriggers(Object.keys(this.properties));
-            }
-        }
+        value: new Montage()
     },
 
     /**
-     * Descriptors of the properties of this type of object, by property name.
+     * Descriptors of the properties of objects of this type, by property name.
      *
-     * The object provided by this property should not be modified by any object
-     * other than {@link ObjectDescriptor}.
+     * The returned object should not be modified and
+     * [addProperty]{@link ObjectDescriptor#addProperty} or
+     * [removeProperty]{@link ObjectDescriptor#removeProperty} should be used
+     * instead to modify the properties.
      *
      * @type {Object.&lt;string, PropertyDescriptor>}
      */
     properties: {
-        value: {}
+        get: function () {
+            if (!this._properties) {
+                this._properties = {};
+            }
+            return this._properties;
+        }
     },
 
+    /***************************************************************************
+     * Property management methods.
+     */
+
     /**
-     * Convenience method to define a relationship without having to manually
-     * create a {@link RelationshipDescriptor} or one or more
-     * [PropertyDescriptors]{@link PropertyDescriptor}.
+     * Add or replace a property descriptor of this object descriptor.
      *
      * @method
-     * @argument {Object} definition - An object defining the relationship by
-     *                                 providing values for the
-     *                                 [destinationType]{@link RelationshipDescriptor#destinationType},
-     *                                 [valueExpressions]{@link RelationshipDescriptor#valueExpression},
-     *                                 and
-     *                                 [criteriaExpressions]{@link RelationshipDescriptor#criteriaExpressions}
-     *                                 properties in the
-     *                                 {@link RelationshipDescriptor} that will
-     *                                 be created by this method.
      */
-    addRelationship: {
-        value: function (definition) {
-            var relationship = new RelationshipDescriptor(),
-                keys = Object.keys(definition.valueExpressions),
-                property, i, n;
-            relationship.destinationType = definition.destinationType;
-            relationship.valueExpressions = definition.valueExpressions;
-            relationship.criteriaExpressions = definition.criteriaExpressions;
-            for (i = 0, n = keys.length; i &lt; n; ++i) {
-                property = new PropertyDescriptor();
-                property.relationship = relationship;
-                this.properties[keys[i]] = property;
-                this._addTrigger(keys[i]);
+    addProperty: {
+        value: function (name, descriptor) {
+            this.properties[name] = descriptor;
+        }
+    },
+
+    /**
+     * Remove a property descriptor of this object descriptor.
+     *
+     * @method
+     */
+    removeProperty: {
+        value: function (name) {
+            delete this.properties[name];
+        }
+    },
+
+    /**
+     * Convenience method to define multiple relationships without having to
+     * manually create [RelationshipDescriptors]{@link RelationshipDescriptor}
+     * for them.
+     *
+     * @private
+     * @method
+     * @argument {Object} definitions - An object whose property names are the
+     *                                  names of the relationships to add and
+     *                                  whose property values are objects with
+     *                                  values for the
+     *                                  [destinationType]{@link RelationshipDescriptor#destinationType},
+     *                                  [targetProperties]{@link RelationshipDescriptor#targetProperties},
+     *                                  and
+     *                                  [criteriaExpressions]{@link RelationshipDescriptor#criteriaExpressions}
+     *                                  properties of the
+     *                                  [RelationshipDescriptors]{@link RelationshipDescriptor}
+     *                                  to create for each relationship.
+     *                                  If any destinationType is null the
+     *                                  corresponding relationship will be
+     *                                  created from this type to itself.
+     */
+    _addRelationships: {
+        value: function (definitions) {
+            var name;
+            for (name in (definitions || {})) {
+                this._addRelationship(name, definitions[name]);
             }
         }
     },
 
     /**
+     * Convenience method to define a single relationship without having to
+     * manually create a {@link RelationshipDescriptor} for it.
+     *
      * @private
      * @method
+     * @argument {string} name       - The name of the relationship
+     * @argument {Object} definition - An object with values for the
+     *                                 [destinationType]{@link RelationshipDescriptor#destinationType},
+     *                                 [targetProperties]{@link RelationshipDescriptor#targetProperties},
+     *                                 and
+     *                                 [criteriaExpressions]{@link RelationshipDescriptor#criteriaExpressions}
+     *                                 properties of the
+     *                                 {@link RelationshipDescriptor} to create.
+     *                                 If destinationType is null a relationship
+     *                                 will be created from this type to itself.
      */
-     _addTriggers: {
-        value: function (names) {
-            var property, i, n;
-            for (i = 0, n = names.length; i &lt; n; ++i) {
-                property = this.properties[names[i]];
-                if (property &amp;&amp; property.relationship) {
-                    this._addTrigger(names[i]);
-                }
-            }
+    _addRelationship: {
+        value: function (name, definition) {
+            var relationship = new RelationshipDescriptor();
+            relationship.destinationType = definition.destinationType || this;
+            relationship.targetProperties = definition.targetProperties || [];
+            relationship.criteriaExpressions = definition.criteriaExpressions || {};
+            this.addProperty(name, relationship);
         }
-     },
+    },
 
     /**
+     * Convenience method to define non-relationship properties without having
+     * to manually create [PropertyDescriptors]{@link PropertyDescriptor} for
+     * each of them.
+     *
      * @private
      * @method
      */
-     _addTrigger: {
-        value: function (name, property) {
-            var self = this,
-                replaced = Object.getOwnPropertyDescriptor(this.prototype, name),
-                replacement = {
-                    get: function () {
-                        self._triggerGet.call(self, this, name);
-                    },
-                    set: function (value) {
-                        self._triggerSet.call(self, this, name, value);
-                    },
-                    enumerable: true
-                };
-            Montage.defineProperty(this.prototype, name, replacement);
-            this._triggerReplaceds = this._triggerReplaceds || new WeakMap();
-            this._triggerReplaceds.set(replacement.get, replaced);
-        }
-     },
-
-    /**
-     * @private
-     * @method
-     */
-     _removeTriggers: {
+    _addNonRelationshipProperties: {
         value: function (names) {
             var i, n;
-            for (i = 0, n = names.length; i &lt; n; ++i) {
-                this._removeTrigger(names[i]);
+            for (i = 0, n = names ? names.length : 0; i &lt; n; ++i) {
+                this.addProperty(names, new PropertyDescriptor());
             }
         }
-     },
+    }
+
+}, {
+
+    /***************************************************************************
+     * Constructor methods (class methods).
+     */
 
     /**
-     * @private
+     * Convenience method to generate a getter function that will create and
+     * then cache the object descriptor corresponding to a constructor. The
+     * object descriptors will be created with non-relationship properties taken
+     * from the properties of the constructor's prototype and with the
+     * relationships specified.
+     *
+     * @memberof ObjectDescriptor
      * @method
+     * @argument {Object} exports       - A Montage Require exports object
+     *                                    defining the constructor.
+     * @argument {string} name          - The name with which the constructor is
+     *                                    defined in the exports, which will be
+     *                                    used as the name of the type.
+     * @argument {Object} relationships - An object whose property names are the
+     *                                    names of the relationships to add and
+     *                                    whose property values are objects with
+     *                                    values for the
+     *                                    [destinationType]{@link RelationshipDescriptor#destinationType},
+     *                                    [targetProperties]{@link RelationshipDescriptor#targetProperties},
+     *                                    and
+     *                                    [criteriaExpressions]{@link RelationshipDescriptor#criteriaExpressions}
+     *                                    properties of the
+     *                                    [RelationshipDescriptors]{@link RelationshipDescriptor}
+     *                                    to create for each relationship.
+     *                                    If any destinationType is null the
+     *                                    corresponding relationship will be
+     *                                    created from this type to itself.
      */
-     _removeTrigger: {
-        value: function (name) {
-            var replacement = Object.getOwnPropertyDescriptor(this.prototype, name);
-                replaced = replacement &amp;&amp; this._triggerReplaceds &amp;&amp; this._triggerReplaceds.get(replacement.get);
-            if (replaced) {
-                Montage.defineProperty(this.prototype, name, replaced);
-                this._triggerReplaceds.delete(replacement.get);
+    getterFor: {
+        value: function (exports, name, relationships) {
+            return function () {
+                if (!this._type) {
+                    this._type = new ObjectDescriptor();
+                    this._type.name = name;
+                    this._type.prototype = exports[name].prototype;
+                    this._type._addNonRelationshipProperties(Object.keys(exports[name]));
+                    this._type._addRelationships(relationships);
+                }
+                return this._type;
             }
         }
-     },
-
-    /**
-     * @private
-     * @method
-     */
-     _triggerGet: {
-        value: function (object, name) {
-            // Let a service fetch this property's value asynchronously.
-            DataService.rootService._getProperty(object, name);
-            // Now that the value is being fetched, remove the trigger to
-            // prevent multiple fetches.
-            this._removeTrigger(name);
-            // Now that the trigger is removed the following is sufficient to
-            // get the property's current value (usually undefined).
-            return object[name];
-        }
-     },
-
-    /**
-     * @private
-     * @method
-     */
-     _triggerSet: {
-        value: function (object, name, value) {
-            // Remove this trigger since we don't want the value set here to be
-            // later overridden by a triggerred fetch.
-            this._removeTrigger(name);
-            // Now that the trigger is removed the following is sufficient to
-            // set the property's value.
-            object[name] = value;
-        }
-     }
+    }
 
 });
 </code></pre>
@@ -233,13 +250,13 @@ exports.ObjectDescriptor = Montage.specialize(/** @lends ObjectDescriptor# */{
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

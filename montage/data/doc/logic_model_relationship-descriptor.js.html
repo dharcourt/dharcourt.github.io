@@ -26,20 +26,26 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var bootstrap = require("logic/bootstrap/bootstrap.js"),
-    Montage = require("montage").Montage;
+            <pre class="prettyprint source linenums"><code>var PropertyDescriptor = require("logic/model/property-descriptor").PropertyDescriptor;
 
 /**
- * Describes a relationship between objects of a certain type and related
- * objects or other related data.
+ * Describes a relationship between a property of objects of a certain type and
+ * related objects or other related data.
  *
  * @class
  * @extends external:Montage
  */
-exports.RelationshipDescriptor = Montage.specialize(/** @lends RelationshipDescriptor# */{
+exports.RelationshipDescriptor = PropertyDescriptor.specialize(/** @lends RelationshipDescriptor# */{
 
     /**
-     * The type of the objects that will be returned by the relationship.
+     * @type {boolean}
+     */
+    isRelationship: {
+        value: true
+    },
+
+    /**
+     * The type of the objects that will be returned by this relationship.
      *
      * @type {ObjectDescriptor}
      */
@@ -48,39 +54,46 @@ exports.RelationshipDescriptor = Montage.specialize(/** @lends RelationshipDescr
     },
 
     /**
-     * The values to be set by the relationship on objects having the
-     * relationship. These values are expressed in terms of the names of the
-     * properties whose values are to be set, and for each of these names an
-     * [FRB expression]{@link external:FrbExpression} defining how the
-     * corresponding property value will be obtained. Each of these expressions
-     * will be evaluated within the scope of the objects returned by the
-     * relationship to get the property value.
+     * The names of any origin properties whose values will be set to the
+     * objects fetched by this relationships. Relationships set values in two
+     * ways: 1) They set or update properties of the objects they fetch;
+     * and 2) They can set or update properties of the object that owns the
+     * relationship. This array contains the names of the later properties.
      *
-     * The object provided by this property should not be modified by any object
-     * other than {@link RelationshipDescriptor}.
-     *
-     * @type {Object.&lt;string, external:FrbExpression>}
+     * @type {string[]}
      */
-    valueExpressions: {
-        value: {}
+    targetProperties: {
+        get: function () {
+            if (!this._targetProperties) {
+                this._targetProperties = [];
+            }
+            return this._targetProperties;
+        },
+        set: function (properties) {
+            this._targetProperties = properties;
+        }
     },
 
     /**
-     * The criteria to set on the selector used to fetch the objects returned
-     * by this relationship. These criteria are expressed in terms of the names
-     * of the criteria to set on the selector, and for each of these names an
+     * The criteria that define the objects fetched by this relationship. These
+     * criteria are expressed in terms of the names of the criteria to set on
+     * the fetch selector, and for each of these names an
      * [FRB expression]{@link external:FrbExpression} defining how the
-     * corresponding criteria value will be obtained. Each of these expressions
-     * will be evaluated within the scope of objects having the relationship to
-     * get the criteria value.
-     *
-     * The object provided by this property should not be modified by any object
-     * other than {@link RelationshipDescriptor}.
+     * corresponding criteria value will be obtained. These expressions will be
+     * evaluated within the scope of the objects that own the relationship.
      *
      * @type {Object.&lt;string, external:FrbExpression>}
      */
     criteriaExpressions: {
-        value: {}
+        get: function () {
+            if (!this._criteriaExpressions) {
+                this._criteriaExpressions = {};
+            }
+            return this._criteriaExpressions;
+        },
+        set: function (expressions) {
+            this._criteriaExpressions = expressions;
+        }
     }
 
 });
@@ -94,13 +107,13 @@ exports.RelationshipDescriptor = Montage.specialize(/** @lends RelationshipDescr
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Sep 09 2015 11:36:48 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
