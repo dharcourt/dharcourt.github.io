@@ -212,7 +212,7 @@ data is already there.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line693">line 693</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line701">line 701</a>
     </li></ul></dd>
     
 
@@ -540,7 +540,7 @@ before the service is added as a child of another service.</p>
 
     
 
-    <h4 class="name" id=".registerService"><span class="type-signature">(static) </span>registerService<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="DataService.html">DataService</a>}</span></h4>
+    <h4 class="name" id=".registerService"><span class="type-signature">(static) </span>registerService<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -549,7 +549,326 @@ before the service is added as a child of another service.</p>
 <div class="description">
     <p>Register the main service or one of its descendants.</p>
 <p>For the <code>mainService</code> constructor calls this method by default for the
-first created services, so <code>mainService</code> when raw
+first created services, so <a href="DataService.html#.mainService"><code>mainService</code></a>
+will be set correctly if the first created service is either the main
+service or a descendant of the main service.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line748">line 748</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".withType"><span class="type-signature">(static) </span>withType<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="DataService.html">DataService</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Create a service of the specified type.</p>
+<p>This method will typically be called in this way:</p>
+<pre class="prettyprint source"><code>var myService = DataService.withType.call(MyService, My.TYPE);</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line765">line 765</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="DataService.html">DataService</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="addChildService"><span class="type-signature"></span>addChildService<span class="signature">(service)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Adds the specified service as a child of this service. The added service
+must have a type and it will become responsible for managing data of that
+type for this service.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>service</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="DataService.html">DataService</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line161">line 161</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="addRawData"><span class="type-signature"></span>addRawData<span class="signature">(stream, rawData, context)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>To be called by <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> when raw
 data is received. This method should never be called directly by users of
 this service.</p>
 <p>This method creates and registers the data objects that
@@ -708,7 +1027,7 @@ or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line445">line 445</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line454">line 454</a>
     </li></ul></dd>
     
 
@@ -839,7 +1158,7 @@ or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line288">line 288</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line297">line 297</a>
     </li></ul></dd>
     
 
@@ -971,7 +1290,16 @@ their <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> me
 
             
 
-            <td class="description last"><p>Defines what data should be returned.</p></td>
+            <td class="description last"><p>Defines what data should be returned.
+                                    A <a href="ObjectDescriptor.html"><code>type</code></a> can
+                                    be provided instead of a
+                                    <a href="DataSelector.html"><code>selector</code></a>,
+                                    in which case a
+                                    <a href="DataSelector.html"><code>selector</code></a>
+                                    with no
+                                    <a href="DataSelector.html#criteria"><code>criteria</code></a>
+                                    will be created and used for the
+                                    fetch.</p></td>
         </tr>
 
     
@@ -1038,7 +1366,7 @@ their <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> me
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line226">line 226</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line235">line 235</a>
     </li></ul></dd>
     
 
@@ -1186,7 +1514,7 @@ method is called, even after it returns.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line409">line 409</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line418">line 418</a>
     </li></ul></dd>
     
 
@@ -1473,7 +1801,7 @@ such object exists, create one.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line323">line 323</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line332">line 332</a>
     </li></ul></dd>
     
 
@@ -1660,7 +1988,7 @@ or if no such object exists a newly created object for that data.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line548">line 548</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line557">line 557</a>
     </li></ul></dd>
     
 
@@ -1821,7 +2149,7 @@ data is available at the time this method is called.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line363">line 363</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line372">line 372</a>
     </li></ul></dd>
     
 
@@ -2006,7 +2334,7 @@ exists only so it can be overridden in subclasses.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line603">line 603</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line612">line 612</a>
     </li></ul></dd>
     
 
@@ -2228,7 +2556,7 @@ by the raw data object to the data object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line488">line 488</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line497">line 497</a>
     </li></ul></dd>
     
 
@@ -2365,7 +2693,7 @@ added to that stream.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line515">line 515</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line524">line 524</a>
     </li></ul></dd>
     
 
@@ -2582,7 +2910,7 @@ child service itself.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line270">line 270</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line279">line 279</a>
     </li></ul></dd>
     
 
@@ -2810,7 +3138,7 @@ changed data has been saved.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line669">line 669</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line678">line 678</a>
     </li></ul></dd>
     
 
@@ -2858,7 +3186,7 @@ changed data has been saved.</li>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 18:58:50 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 22:08:00 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
