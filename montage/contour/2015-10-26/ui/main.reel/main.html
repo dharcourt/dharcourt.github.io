@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Main</title>
+    <link rel="stylesheet" href="main.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "main"},
+                "floatingButton": {"@": "floatingButton"},
+                "mainMenu": {"@": "mainMenu"},
+                "panel": {"@": "panel"}
+            }
+        },
+        "contourController": {
+            "prototype": "contour-framework/logic/controller/contour-controller",
+            "properties": {
+                "map": {"@": "map"},
+                "panel": {"@": "panel"}
+            },
+            "listeners": [
+                {
+                    "type": "mapClickAction",
+                    "listener": {"@": "postMessageInterface"}
+                }
+            ]
+        },
+        "floatingButton": {
+            "prototype": "contour-framework/ui/control/floating-button.reel",
+            "properties": {
+                "element": {"#": "floatingButton"}
+            },
+            "bindings": {
+                "currentSection": {"<-": "application.currentSection"}
+            }
+        },
+        "fonts": {
+            "prototype": "contour-framework/ui/fonts.reel",
+            "properties": {
+                "element": {"#": "fonts"}
+            }
+        },
+        "header": {
+            "prototype": "contour-framework/ui/control/header.reel",
+            "properties": {
+                "element": {"#": "header"},
+                "panel": {"@": "panel"}
+            },
+            "bindings": {
+                "hazard": { "<-" : "@owner.application.delegate.currentHazard"}
+            }
+        },
+        "mainMenu": {
+            "prototype": "contour-framework/ui/control/menu.reel",
+            "properties": {
+                "element": {"#": "mainMenu"},
+                "panel": {"@": "panel"},
+                "floatingButton": {"@": "floatingButton"}
+            }
+        },
+        "map": {
+            "prototype": "contour-framework/ui/map/map.reel",
+            "properties": {
+                "element": {"#": "map"},
+                "defaultZoomLevel": 8,
+                "watermarkHeight": 61,
+                "watermarkWidth": 105,
+                "watermarkUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGkAAAA9CAMAAACZQ7fpAAAA/1BMVEXKQ0r////KQ0rKQ0rKQ0rKQ0r////KQ0rKQ0rKQ0r////KQ0rKQ0r////KQ0rKQ0rKQ0r////KQ0rKQ0rKQ0r////KQ0rKQ0r////KQ0rKQ0rKQ0r////KQ0rKQ0rKQ0r////+/v7KQ0rKQ0rKQ0r////KQ0r////////KQ0r////KQ0rKQ0r////KQ0r////KQ0r////KQ0rKQ0r////KQ0rKQ0r////////KQ0r////////////KQ0r////////KQ0r////KQ0rKQ0r////////KQ0r////KQ0r////KQ0r////KQ0r////KQ0r////KQ0r////KQ0r////KQ0ohP1ucAAAAVHRSTlMAAAYMFx8fIygzOkNNUFJXYWdqc3d5gISHiJCUl5igo6Slp6qusLi5w8fHyczP0dXW2tvf3+Hj4+fp6uzv8fHz9PT19vb3+Pj5+fr6+/v8/P39/v5BHaaIAAADsklEQVR4Ae3YcXPbNBjH8T5b8TYzb2uZh4HCzMBLMAslNCxZ7cUYnHmupomnP73/10JySRwrtdv07OyOu33+av9ov/eoqnTRAX0q/5dSmAIsIWf+3meygJjsFBjsu0RANO8JqNuXDpaoxv2L1/UlGgF2l6Uzrb+rLw3AXc70VGv9773a0gRRh6W7F/rVP/r3upLLhdVh6Rf94fCJ1sdXSu5odkrUXemh1s+IftPv7lIVG+vWSemtXmy8w4/6JVWh89IP+vIBzX2j9ZdmadquRNu+f7oIzR2//Gm/pQYWkOyjJJFn2cinjQCQzh5KBSc5IF1a84cLQYsS1bNcq58BHJKps5LhSABI9lYyZADEwPMDMoQFoIQSIht0VXKCTBYSwHArBbWYecwQR21KBktgYUxVfaj1+iq7qxJ5DHA86pklpmWKEbctnRAFtkPkhkPGCZFj1ZUoArcr9SRkhGgeyjiCHJEpKH9/DzjardQ0kQTkSaIEFoTXWPIAr9VM1gQYugpLY+u6ktOqFGfAlLEyoi09sLELdy2NlU8bQ9eORMKsUFKhP6jfexRjfIuSMv7/BlkG2ReVjpwmKTChjXBdcllYu5dOALhEwWq9EyUmQ4GrXCqdrvbBUN3qjBgDCHoCES0cSRQFalSG8guARSK4uN25lwE4l1gsYXSezBhNfKpwfN+77U0oMCcA9GkEKDQaUsvbnbEkkjgHYjRKuyoNQlwva1vCijiVoqdSRpOgq5lwKv3BlZBCKaRmtu/cXFJY4aSQOZTRqn6bUIMgV2ImwHljaUmgxCJV0s9QJdnY5jVSRDYROVN1QylFBSuWNEOFOq9s80d01RQRLSXXlh4dDCsjJY7rI5mqapuxJujsa9p2ArZpybuudPjhC9fcXNZ4gAaS3n88pC0x8p323q/6W1Jbf4cADc7pnX5FWwoku5Qea/0VTbDilT9cz6NjrR+TSexUuvOXPjsgm7EkchFbRDRGrRkR/aH/vkOGfKfVe6Ev7x8QRdhI56m4+Sy/d6lfkGEMdm4sPbjUzxf3hq2MMydErdT4bFpyGPH6y8bSa/12eb/3saEyRh1lbz5vGwblfRI1lZ5p/XBZoglKnGJBYItffUMwhIysZ5M3LZpKF3rlT6IMJjVUMIzoZ732nkz2KFcARL+p9EavPSerQFU0Yhgm9ESX3rR6j7CMqSQMfEqmNiWiiNFA/dj1O2wvkqgxO9rHi683yWES/t7elp1QYo2z3n5fsScMCJFGwad/L/9c+g/IsdLqyVqMIAAAAABJRU5ErkJggg=="
+            },
+            "bindings": {
+                "baseMap": {"<-": "@contourController.baseMap"},
+                "insets": {"<-": "@panel.insets"}
+            },
+            "listeners": [
+                {
+                    "type": "mapClickAction",
+                    "listener": {"@": "contourController"}
+                }
+            ]
+        },
+        "postMessageInterface": {
+            "prototype": "contour-framework/logic/controller/post-message-interface",
+            "properties": {
+                "controller": {"@": "contourController"}
+            },
+            "bindings": {
+                "bounds": {"<-": "@map.bounds"}
+            }
+        },
+        "panel": {
+            "prototype": "contour-framework/ui/control/panel.reel",
+            "properties": {
+                "element": {"#": "panel"},
+                "floatingButton": {"@": "floatingButton"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="main" class="contourApp-Main">
+        <div data-montage-id="fonts" class="contourApp-Main-fonts"></div>
+        <div data-montage-id="map" class="contourApp-Main-map"></div>
+        <div data-montage-id="panel" class="contourApp-Main-panel"></div>
+        <div data-montage-id="header" class="contourApp-Main-header"></div>
+        <div data-montage-id="mainMenu" class="contourApp-Main-mainMenu"></div>
+        <div data-montage-id="floatingButton" class="contourApp-Main-floatingButton"></div>
+    </div>
+</body>
+</html>

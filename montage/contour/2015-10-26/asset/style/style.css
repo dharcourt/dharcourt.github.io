@@ -1,0 +1,78 @@
+/*
+ * Global style rules.
+ */
+
+html {
+    font-family: sans-serif;
+    color: #333;
+
+    /* Prevent iOS text size adjust after orientation change, without disabling user zoom. */
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0; /* Remove default margin */
+    /*Default all element can't be select, only input, textArea can.
+    * Need this because in Safari the cursor always become text cursor
+    * when click any place and drag.
+    */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+html, body {
+    overflow: hidden;
+    background: #262626;
+}
+
+.contour-Loader-outer {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.contour-Loader-middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.contour-Loader-inner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 310px;
+}
+
+.contour-Loader-logo {
+    background: url(../images/pdc-loading-logo.png) no-repeat center center;
+    display: block;
+    height: 107px;
+    padding-bottom: 20px;
+    width: 310px;
+}
+
+.contour-Loader-text {
+    color: #91948b;
+    display: block;
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 18px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    text-wrap: normal;
+}
+
+.contour-Loader-text::before {
+    content: "DisasterAWARE 6.0 is designed to operate within the following compatible browsers: IE 10+, Chrome 30+ and Firefox 26+.  If your browser does not meet these requirements, please upgrade your browser to the most current version.";
+}
+
+@media (min-height: 700px) and (min-width: 700px) and (min-aspect-ratio: 1/1),
+       (min-height: 700px) and (min-width: 1200px) { /* Large landscape screen. */
+    .contour-Loader-inner, .contour-Loader-logo {
+        width: 390px;
+    }
+}

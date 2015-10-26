@@ -1,0 +1,109 @@
+.contourApp-Main {
+    font: 12px "Proxima Nova", sans-serif;
+}
+
+.contourApp-Main-floatingButton {
+    position: absolute;
+    right: 13px;
+    bottom: 13px;
+    z-index: 99999;
+}
+
+.contourApp-Main-header {
+     position: absolute;
+     top:0;
+     left: 0;
+     right: 0;
+     height:44px;
+     display:none;
+}
+
+.contourApp-Main-mainMenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.contourApp-Main-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.contourApp-Main-legacyPanels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.contourApp-Main-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+/* For Condition with removal strategy of hide */
+.montage-invisible {
+    display: none;
+}
+
+@media (min-height: 700px) and (min-width: 700px) { /* Large screen. */
+
+    /*
+     * Reposition other elements to make room for the main menu, make the main
+     * menu always visible and on the left, and hide the main menu button.
+     */
+
+    .contourApp-Main-floatingButton {
+        display: none;
+    }
+
+    .contourApp-Main-mainMenu {
+        width: 44px;
+        top:44px;
+    }
+
+    .contourApp-Main-map {
+        left: 44px;
+        top:44px;
+    }
+
+    .contourApp-Main-legacyPanels {
+        left: 44px;
+        top:44px;
+    }
+
+    .contourApp-Main-panel {
+        left: 44px;
+        top:44px;
+    }
+
+    .contourApp-Main-header
+    {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+    }
+    .contourApp-Menu-item-legend
+    {
+        display:none;
+    }
+
+}
+
+@media (max-aspect-ratio: 999999/1000000) and (max-width: 1199px) and (min-width: 700px) and (min-height: 700px)  {
+
+    .contourApp-Main-map {
+        left: 44px;
+        top:44px;
+    }
+
+}

@@ -1,0 +1,12 @@
+.TreeListItem-isExpandedButton {
+    width: 20px;
+    height: 20px;
+    background: red;
+    float: left;
+    margin-right: 8px;
+    outline: none;
+}
+
+.TreeListItem-isExpanded .TreeListItem-isExpandedButton {
+    background: green;
+}

@@ -1,0 +1,24 @@
+{
+    "_comment": [
+        "# If you use npm to generate or modify this file, make sure",
+        "# to restore the file's 4 space indents after the generation",
+        "# or modification so it matches other source files in the",
+        "# project. npm only generates files with 2 space indents",
+        "# (see https://github.com/npm/npm/pull/3180#issuecomment-16336516)."
+    ],
+    "name": "contour-app",
+    "version": "6.0.0-beta2",
+    "repository": {
+        "type": "git",
+        "url": "konturlabs/contour-app"
+    },
+    "dependencies": {
+        "contour-framework": "konturlabs/contour-framework",
+        "inobounce": "^0.1.1",
+        "montage": "montagestudio/montage-contour#contour"
+    },
+    "private": true,
+    "exclude": [
+        "test"
+    ]
+}

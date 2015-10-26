@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="tree-list-item.css">
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "properties": {
+                "element": {"#": "owner"}
+            }
+        },
+        "isExpandedButton": {
+            "prototype": "montage/ui/button.reel",
+            "properties": {
+                "element": {"#": "isExpandedButton"}
+            },
+            "listeners": [
+                {
+                    "type": "action",
+                    "listener": {"@": "owner"}
+                }
+            ]
+        },
+        "label": {
+            "prototype": "montage/ui/text.reel",
+            "properties": {
+                "element": {"#": "label"}
+            },
+            "bindings": {
+                "value": {"<-": "@owner.iteration.data.name"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-montage-id="owner" class="TreeListItem">
+        <button data-montage-id="isExpandedButton" class="TreeListItem-isExpandedButton"></button>
+        <div data-montage-id="label" class="TreeListItem-label"></div>
+    </div>
+</body>
+</html>

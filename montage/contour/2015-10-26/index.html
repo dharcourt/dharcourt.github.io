@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PDC Quantum</title>
+
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="montage-minimal-project">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="stylesheet" href="asset/style/style.css">
+    <link rel="stylesheet" href="asset/pdc/pdc.css">
+    <link rel="shortcut icon" href="favicon.ico">
+    <!--Cordova interferes with Montage EventManager, PressComposer does not work when below code is enabled-->
+    <!--<script type="text/javascript">-->
+        <!--// If Cordova, load cordova.js-->
+        <!--var originalScript = document.getElementsByTagName('script')[0];-->
+        <!--if (document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1) {-->
+            <!--var cordovaScript = document.createElement('script');-->
+            <!--cordovaScript.src = "cordova.js";-->
+            <!--originalScript.parentNode.insertBefore(cordovaScript, originalScript);-->
+        <!--}-->
+    <!--</script>-->
+
+    <!-- Disable bouncy scroll in iOS Mobile Safari -->
+    <script src="node_modules/inobounce/inobounce.min.js" async></script>
+
+    <script src="node_modules/montage/montage.js"></script>
+    <script type="text/montage-serialization">
+    {
+        "owner": {
+            "prototype": "montage/ui/loader.reel",
+            "properties": {
+                "mainModule": "ui/main.reel"
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="loading contour-Loader-outer">
+        <div class="loading contour-Loader-middle">
+            <div class="loading contour-Loader-inner">
+                <div class="contour-Loader-logo"></div>
+                <div class="contour-Loader-text"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

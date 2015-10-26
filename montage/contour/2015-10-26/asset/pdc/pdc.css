@@ -1,0 +1,26 @@
+/*Override this text to put something text for the loading page.*/
+.contour-Loader-text::before {
+    /*content: "Place text here." !important;*/
+}
+
+/*
+Height of header bar is 44px.  Please keep this in mind when specifying the placement of the logo.
+Override the background url property to put a custom logo.  Please include relative path if necessary.
+*/
+.contour-Header-logoHolder {
+    /*background: url(pdc-globe.svg) no-repeat 10px 8px !important;*/
+    /*background-size: 31.5px 28px !important;*/
+    /*padding: 5px 0 0 52px !important;*/
+}
+
+/*Override this text to put something custom for the system name.  Default System Name*/
+.contour-Header-systemName:before {
+    /*color: white !important;*/
+    /*content: "Place text here." !important;*/
+}
+
+/*Override this text to put something custom for the version number.  Default DisasterAWARE 6.x.x*/
+.contour-Header-applicationVersion:before {
+    /*color: #929292 !important;*/
+    /*content: "Place text here." !important;*/
+}
