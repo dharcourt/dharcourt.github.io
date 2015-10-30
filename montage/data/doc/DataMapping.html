@@ -51,11 +51,11 @@
 <div class="description">
     <p>Maps raw data to data objects of a specific type.</p>
 <p>Currently services define their mapping by overriding their
-<a href="DataService.html#mapRawData"><code>mapRawData()</code></a> method or by using a
+<a href="DataService.html#mapFromRawData"><code>mapFromRawData()</code></a> method or by using a
 <a href="DataMapping.html"><code>DataMapping</code></a> subclass that overrides its
-<a href="DataMapping.html#mapRawData"><code>mapRawData()</code></a> method. In the future it will be
-possible to define mappings declaratively through mapping descriptors read
-from blueprint files.</p>
+<a href="DataMapping.html#mapFromRawData"><code>mapFromRawData()</code></a> method. In the future it
+will be possible to define mappings declaratively through mapping descriptors
+read from blueprint files.</p>
 </div>
 
 
@@ -159,7 +159,7 @@ from blueprint files.</p>
 
     
 
-    <h4 class="name" id="mapRawData"><span class="type-signature"></span>mapRawData<span class="signature">(dataObject, rawData, context)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="mapFromRawData"><span class="type-signature"></span>mapFromRawData<span class="signature">(object, data, context)</span><span class="type-signature"></span></h4>
 
     
 
@@ -169,10 +169,10 @@ from blueprint files.</p>
     <p>Convert raw data to data objects of an appropriate type.</p>
 <p>Subclasses should override this method to map properties of the raw data
 to data objects, as in the following:</p>
-<pre class="prettyprint source"><code>mapRawData: {
-    value: function (dataObject, rawData) {
-        dataObject.firstName = rawData.GIVEN_NAME;
-        dataObject.lastName = rawData.FAMILY_NAME;
+<pre class="prettyprint source"><code>mapFromRawData: {
+    value: function (object, data) {
+        object.firstName = data.GIVEN_NAME;
+        object.lastName = data.FAMILY_NAME;
     }
 }</code></pre><p>The default implementation of this method copies the properties defined
 by the raw data object to the data object.</p>
@@ -211,7 +211,7 @@ by the raw data object to the data object.</p>
 
         <tr>
             
-                <td class="name"><code>dataObject</code></td>
+                <td class="name"><code>object</code></td>
             
 
             <td class="type">
@@ -227,16 +227,15 @@ by the raw data object to the data object.</p>
 
             
 
-            <td class="description last"><p>An object whose properties will be
-                                set or modified to represent the data
-                                define in rawData.</p></td>
+            <td class="description last"><p>An object whose properties must be set or
+                            modified to represent the raw data.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>rawData</code></td>
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -252,8 +251,8 @@ by the raw data object to the data object.</p>
 
             
 
-            <td class="description last"><p>An object whose properties hold the raw
-                                data.</p></td>
+            <td class="description last"><p>An object whose properties' values hold
+                            the raw data.</p></td>
         </tr>
 
     
@@ -277,8 +276,8 @@ by the raw data object to the data object.</p>
             
 
             <td class="description last"><p>A value that was passed in to the
-                                <a href="DataService.html#mapRawData"><code>DataService mapRawData()</code></a>
-                                call that invoked this method.</p></td>
+                            <a href="DataService.html#addRawData"><code>addRawData()</code></a>
+                            call that invoked this method.</p></td>
         </tr>
 
     
@@ -319,7 +318,7 @@ by the raw data object to the data object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-mapping.js.html">logic/service/data-mapping.js</a>, <a href="logic_service_data-mapping.js.html#line44">line 44</a>
+        <a href="logic_service_data-mapping.js.html">logic/service/data-mapping.js</a>, <a href="logic_service_data-mapping.js.html#line43">line 43</a>
     </li></ul></dd>
     
 
@@ -361,13 +360,13 @@ by the raw data object to the data object.</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataObjectDescriptor.html">DataObjectDescriptor</a></li><li><a href="DataPropertyDescriptor.html">DataPropertyDescriptor</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="Enumeration.html">Enumeration</a></li><li><a href="HttpService.html">HttpService</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 22:10:40 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Oct 30 2015 10:20:02 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

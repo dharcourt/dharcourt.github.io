@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: logic/service/http-service.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: logic/service/http-service.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var DataService = require("logic/service/data-service").DataService,
+    DataSelector = require("logic/service/data-selector").DataSelector,
+    Enumeration = require("logic/model/enumeration").Enumeration,
+    Map = require("collections/map"),
+    Promise = require("bluebird");
+
+/**
+ * Provides utility methods for REST services.
+ *
+ * @class
+ * @extends external:DataService
+ */
+exports.HttpService = DataService.specialize(/** @lends HttpService.prototype */ {
+
+    /***************************************************************************
+     * Constants
+     */
+
+    FORM_URL_ENCODED_CONTENT_TYPE_HEADER: {
+        value: {"Content-Type": "application/x-www-form-urlencoded"}
+    },
+
+    /***************************************************************************
+     * Getting property data
+     */
+
+    getHttpPropertyData: {
+        value: function (type, object, propertyName, prerequisitePropertyNames, criteria) {
+            var self, selector, prerequisites;
+            // Create and cache a new fetch promise if necessary.
+            if (!this._getCachedFetchPromise(object, propertyName)) {
+                // Parse arguments.
+                selector = DataSelector.withTypeAndCriteria(type, arguments[arguments.length - 1]);
+                prerequisites = prerequisitePropertyNames;
+                if (arguments.length &lt; 5 || !prerequisites) {
+                    prerequisites = [];
+                } else if (!Array.isArray(prerequisites)) {
+                    prerequisites = Array.prototype.slice.call(arguments, 3, -1);
+                }
+                // Create and cache a new fetch promise
+                self = this;
+                this._setCachedFetchPromise(object, propertyName, this.nullPromise.then(function () {
+                    // First get prerequisite data if necessary...
+                    return self.rootService.getObjectData(object, prerequisites);
+                }).then(function () {
+                    // Then fetch the requested data...
+                    return self.rootService.fetchData(selector);
+                }).then(function (data) {
+                    // Then wait until the next event loop to ensure only one
+                    // fetch is dispatched per event loop (caching ensures all
+                    // subsequent requests for the same fetch promise within the
+                    // same event loop will return the same promise)...
+                    return self._makeEventLoopPromise(data);
+                }).then(function (data) {
+                    // Then removes the promise from the cache so subsequent
+                    // requests for this fetch promise generate new fetches.
+                    self._setCachedFetchPromise(object, propertyName, null);
+                    return data;
+                }));
+
+            }
+            // Return the created or cached fetch promise.
+            return this._getCachedFetchPromise(object, propertyName);
+        }
+    },
+
+    _getCachedFetchPromise: {
+        value: function (object, name) {
+            this._cachedFetchPromises = this._cachedFetchPromises || {};
+            this._cachedFetchPromises[name] = this._cachedFetchPromises[name] || new Map();
+            return this._cachedFetchPromises[name].get(object);
+        }
+    },
+
+    _setCachedFetchPromise: {
+        value: function (object, name, promise) {
+            this._cachedFetchPromises = this._cachedFetchPromises || {};
+            this._cachedFetchPromises[name] = this._cachedFetchPromises[name] || new Map();
+            this._cachedFetchPromises[name].set(object, promise);
+        }
+    },
+
+    /***************************************************************************
+     * Sending requests
+     */
+
+    sendHttpRequest: {
+        value: function (types, url, headers, body) {
+            return this._sendHttpRequest(this._parseSendHttpRequestArguments(arguments), true);
+        }
+    },
+
+    sendHttpRequestWithoutCredentials: {
+        value: function (types, url, headers, body) {
+            return this._sendHttpRequest(this._parseSendHttpRequestArguments(arguments), false);
+        }
+    },
+
+    _sendHttpRequest: {
+        value: function (arguments, useCredentials) {
+            var self = this,
+                types = arguments.types,
+                url = arguments.url,
+                headers = arguments.headers,
+                body = arguments.body;
+            return new Promise(function (resolve, reject) {
+                var request, name;
+                // Fetch the requested raw data.
+                // TODO: Reject the promise instead of returning null on error.
+                if (url) {
+                    request = new XMLHttpRequest();
+                    request.onload = function () { resolve(request); };
+                    request.open(body ? "POST" : "GET", url, true);
+                    for (name in headers) {
+                        request.setRequestHeader(name, headers[name]);
+                    }
+                    request.withCredentials = useCredentials;
+                    request.send(body);
+                } else {
+                    console.warn(new Error("Undefined REST URL"));
+                    resolve(null);
+                }
+            }).then(function (request) {
+                // The response status can be 0 initially even for successful
+                // requests, so defer the processing of this response until the
+                // next event loop to give the status time to be set correctly.
+                return self._makeEventLoopPromise(request);
+            }).then(function (request) {
+                // Log a warning and return null for error status responses.
+                // TODO: Return a rejected promise instead of null on error.
+                if (request &amp;&amp; request.status >= 300) {
+                    console.warn(new Error("Status " + request.status + " received for REST URL " + url));
+                    request = null;
+                }
+                return request;
+            }).then(function (request) {
+                // Parse the request response according to the requested type.
+                // TODO: Support multiple alternate types.
+                return request &amp;&amp; types[0].parseResponse(request, url);
+            });
+        }
+    },
+
+    _parseSendHttpRequestArguments: {
+        value: function (arguments) {
+            var types, offset, i, n;
+            // The type array is the first argument if that's an array, or an
+            // array containing the first argument and all following ones that
+            // are HttpService DataTypes if there are any, or an empty array.
+            types = Array.isArray(arguments[0]) &amp;&amp; arguments[0];
+            for (i = 0, n = arguments.length; !types; i += 1) {
+                if (i === n || !(arguments[i] instanceof exports.HttpService.DataType)) {
+                    types = Array.prototype.slice.call(arguments, 0, i);
+                    offset = i - 1;
+                }
+            }
+            // The remaining argument values come from the remaining arguments.
+            return {
+                types:   types.length ? types : [this.constructor.DataType.JSON],
+                url:     arguments[1 + offset || 0],
+                headers: arguments[2 + offset || 1] || {},
+                body:    arguments[3 + offset || 2]
+            };
+        }
+    },
+
+    _makeEventLoopPromise: {
+        value: function (value) {
+            return new Promise(function (resolve, reject) {
+                window.setTimeout(function () {
+                    resolve(value);
+                }, 0);
+            });
+        }
+    }
+
+}, /** @lends HttpService */ {
+
+    /***************************************************************************
+     * Types
+     */
+
+    DataType: {
+        get: Enumeration.getterFor("_DataType", {
+
+            BINARY: [{
+                // TO DO.
+            }],
+
+            JSON: [{
+                parseResponse: {
+                    value: function (request, url) {
+                        var text = request &amp;&amp; request.responseText,
+                            data = null;
+                        if (text) {
+                            try {
+                                data = JSON.parse(text);
+                            } catch (error) {
+                                console.warn(new Error("Can't parse JSON received for REST URL " + url));
+                                console.warn("Response text:", text);
+                            }
+                        } else if (request) {
+                            console.warn(new Error("No JSON received for REST URL " + url));
+                        }
+                        return data;
+                    }
+                }
+            }],
+
+            JSONP: [{
+                parseResponse: {
+                    value: function (request, url) {
+                        var text = request &amp;&amp; request.responseText,
+                            start = text &amp;&amp; text.indexOf("(") + 1;
+                            end = text &amp;&amp; text.length &amp;&amp; text.charAt(text.length - 1) === ")" &amp;&amp; text.length - 1;
+                            data = null;
+                        if (start &amp;&amp; end) {
+                            try {
+                                data = text &amp;&amp; JSON.parse(text.slice(start, end));
+                            } catch (error) {
+                                console.warn(new Error("Can't parse JSONP received for REST URL " + url));
+                                console.warn("Response text:", text);
+                            }
+                        } else if (text) {
+                            console.warn(new Error("Can't parse JSONP received for REST URL " + url));
+                            console.warn("Response text:", text);
+                        } else if (request) {
+                            console.warn(new Error("No JSONP received for REST URL " + url));
+                        }
+                        return data;
+                    }
+                }
+            }],
+
+            TEXT: [{
+                // TO DO.
+            }],
+
+            XML: [{
+                // TO DO.
+            }]
+
+        })
+    }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataObjectDescriptor.html">DataObjectDescriptor</a></li><li><a href="DataPropertyDescriptor.html">DataPropertyDescriptor</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="Enumeration.html">Enumeration</a></li><li><a href="HttpService.html">HttpService</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Oct 30 2015 10:20:02 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

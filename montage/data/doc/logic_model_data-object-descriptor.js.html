@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: logic/model/data-object-descriptor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: logic/model/data-object-descriptor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var ObjectDescriptor = require("logic/model/object-descriptor").ObjectDescriptor,
+    PropertyDescriptor = require("logic/model/property-descriptor").PropertyDescriptor;
+
+/**
+ * Extends an object descriptor with the additional information needed by
+ * Montage Data.
+ *
+ * @class
+ * @extends ObjectDescriptor
+ */
+exports.DataObjectDescriptor = ObjectDescriptor.specialize(/** @lends DataObjectDescriptor.prototype */ {
+
+    /**
+     * @type {Array.&lt;string>}
+     */
+    identifiers: {
+        value: []
+    },
+
+    /**
+     * @type {Object.&lt;string, DataPropertyDescriptor>}
+     */
+    properties: {
+        get: function () {
+            return Object.getOwnPropertyDescriptor(ObjectDescriptor.prototype, "properties").get.call(this);
+        }
+    },
+
+    /**
+     * @method
+     * @argument {string} name
+     * @argument {DataPropertyDescriptor} descriptor
+     */
+    setProperty: {
+        value: function (name, descriptor) {
+            ObjectDescriptor.prototype.setProperty.call(this, name, descriptor);
+        }
+    },
+
+    _addRelations: {
+        value: function (relations) {
+            var names, i, n;
+            names = Object.keys(relations);
+            for (i = 0, n = names.length; i &lt; n; i += 1) {
+                this._addRelationship(names[i], relations[names[i]]);
+            }
+        }
+    },
+
+    _addRelationship: {
+        value: function (name, relation) {
+            // TODO: Add derived properties, relationship criteria,
+            // relationship targets, and shared fetch information.
+            if (this.properties[name]) {
+                this.properties[name].isRelationship = true;
+            } else {
+                this.setProperty(name, this.makePropertyDescriptor(true));
+            }
+        }
+    },
+
+    makePropertyDescriptor: {
+        value: function (isRelationship) {
+            var descriptor = new PropertyDescriptor();
+            if (isRelationship) {
+                descriptor.isRelationship = true;
+            }
+            return descriptor;
+        }
+    }
+
+}, /** @lends DataObjectDescriptor */ {
+
+    getterFor: {
+        value: function (exports, name, types, identifiers, relations) {
+            // Note: The returned getter function has to check
+            // this.hasOwnProperty("_type"), not just this._type, because if
+            // the class using the getter is a subclass of another class using
+            // a similar getter this._type will return the value of the the
+            // parent class type even in the child class' getter.
+            var self = this,
+                parsed = self._parseGetterForArguments(arguments),
+                getter = ObjectDescriptor.getterFor.call(self, parsed.exports, parsed.name, parsed.types);
+            return function () {
+                if (!this.hasOwnProperty("_type")) {
+                    this._type = getter.call(this);
+                    this._type.identifiers = parsed.identifiers;
+                    this._type._addRelations(parsed.relations);
+                }
+                return this._type;
+            }
+        }
+    },
+
+    _parseGetterForArguments: {
+        value: function (arguments) {
+            var types, identifiers, offset, i, n;
+            // The type object is the third argument if it's a non-array
+            // non-string object.
+            types = this._isObject(arguments[2]) &amp;&amp; arguments[2];
+            offset = types ? 0 : -1;
+            // The identifiers array is the fourth argument if that's an array,
+            // or an array containing the fourth argument and all following ones
+            // that are strings if there are any, or an empty array.
+            identifiers = Array.isArray(arguments[3 + offset]) &amp;&amp; arguments[3 + offset];
+            for (i = 3 + offset, n = arguments.length; !identifiers; i += 1) {
+                if (i === n || typeof arguments[i] !== "string") {
+                    identifiers = Array.prototype.slice.call(arguments, 3 + offset, i);
+                    offset = i - 4;
+                }
+            }
+            // The remaining argument values come from the remaining arguments.
+            return {
+                exports: arguments[0],
+                name: arguments[1],
+                types: types || undefined,
+                identifiers: identifiers,
+                relations: arguments[4 + offset] || {}
+            };
+        }
+    },
+
+    _isObject: {
+        value: function (value) {
+            return value &amp;&amp;
+                   typeof value === "object" &amp;&amp;
+                   !Array.isArray(value) &amp;&amp;
+                   !(value instanceof String) &amp;&amp;
+                   !(value instanceof Number) &amp;&amp;
+                   !(value instanceof Boolean);
+        }
+    }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataObjectDescriptor.html">DataObjectDescriptor</a></li><li><a href="DataPropertyDescriptor.html">DataPropertyDescriptor</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="Enumeration.html">Enumeration</a></li><li><a href="HttpService.html">HttpService</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Oct 30 2015 10:20:02 GMT-0500 (CDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

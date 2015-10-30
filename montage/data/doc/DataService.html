@@ -96,7 +96,7 @@ at the beginning of its constructor implementation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line21">line 21</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -162,9 +162,10 @@ at the beginning of its constructor implementation.</p>
 requests for data are sent. This service can in turn delegate management
 of different types of data to child services specialized for each type.</p>
 <p>For this property to be correctly set
-<code>registerService()</code> or
-<a href="DataService.html#getPropertyData"><code>getPropertyData()</code></a> when the requested
-data is already there.</p>
+<code>registerService()</code> that have
+been changed since [saveDataChanges()]@{link DataService.saveDataChanges}
+was last called, or since the root service was created if
+saveDataChanges() hasn't been called yet.</p>
 </div>
 
 
@@ -173,7 +174,7 @@ data is already there.</p>
     <ul>
         <li>
             
-<span class="param-type">Promise</span>
+<span class="param-type">Set.&lt;Object></span>
 
 
         </li>
@@ -212,7 +213,83 @@ data is already there.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line699">line 699</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line311">line 311</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="createdDataObjects"><span class="type-signature"></span>createdDataObjects<span class="type-signature"> :Set.&lt;Object></span></h4>
+
+
+
+
+<div class="description">
+    <p>A set of the data objects created by this service or any other descendent
+of this service's [root service]@{link DataService.rootService} since
+[saveDataChanges()]@{link DataService.saveDataChanges} was last called,
+or since the root service was created if saveDataChanges() hasn't been
+called yet.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Set.&lt;Object></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line330">line 330</a>
     </li></ul></dd>
     
 
@@ -236,9 +313,9 @@ data is already there.</p>
 
 
 <div class="description">
-    <p>If defined, used by <a href="DataService.html#mapRawData"><code>mapRawData()</code></a> to map
-the raw data on which this service is based to the data objects returned
-by this service.</p>
+    <p>If defined, used by <a href="DataService.html#mapFromRawData"><code>mapFromRawData()</code></a>
+to map the raw data on which this service is based to the data objects
+returned by this service.</p>
 </div>
 
 
@@ -286,7 +363,74 @@ by this service.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line77">line 77</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line76">line 76</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="nullFunction"><span class="type-signature"></span>nullFunction<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>A function that does nothing but returns null, useful for terminating
+a promise chain that needs to return null, as in the following code:</p>
+<pre class="prettyprint source"><code>var self = this;
+return this.fetchSomethingAsynchronously().then(function (data) {
+    return self.doSomethingAsynchronously(data.part);
+}).then(this.nullFunction);</code></pre>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line851">line 851</a>
     </li></ul></dd>
     
 
@@ -310,7 +454,10 @@ by this service.</p>
 
 
 <div class="description">
-    <p>A reference to DataService.NULL_PROMISE.</p>
+    <p>A shared Promise resolved with a value of <code>null</code>, useful for
+returning from <a href="DataService.html#getObjectData"><code>getObjectData()</code></a> or
+<a href="DataService.html#getPropertyData"><code>getPropertyData()</code></a> when the requested
+data is already there.</p>
 </div>
 
 
@@ -358,7 +505,7 @@ by this service.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line86">line 86</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line833">line 833</a>
     </li></ul></dd>
     
 
@@ -432,7 +579,7 @@ service. For most applications this will be the
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line114">line 114</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -513,7 +660,7 @@ before the service is added as a child of another service.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line57">line 57</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -595,7 +742,7 @@ service or a descendant of the main service.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line746">line 746</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line922">line 922</a>
     </li></ul></dd>
     
 
@@ -618,108 +765,6 @@ service or a descendant of the main service.</p>
 
 
 
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".withType"><span class="type-signature">(static) </span>withType<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="DataService.html">DataService</a>}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Create a service of the specified type.</p>
-<p>This method will typically be called in this way:</p>
-<pre class="prettyprint source"><code>var myService = DataService.withType.call(MyService, My.TYPE);</code></pre>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line763">line 763</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="DataService.html">DataService</a></span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -830,7 +875,7 @@ type for this service.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line161">line 161</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -875,14 +920,14 @@ this service.</p>
 will represent the raw data with repeated calls to
 <a href="DataService.html#getDataObject"><code>getDataObject()</code></a>, maps
 the raw data to those objects with repeated calls to
-<a href="DataService.html#mapRawData"><code>mapRawData()</code></a>, and then adds those objects
-to the specified stream.</p>
+<a href="DataService.html#mapFromRawData"><code>mapFromRawData()</code></a>, and then adds those
+objects to the specified stream.</p>
 <p>Subclasses will probably never need to override
 this method, and they can instead override their
 <a href="DataService.html#getDataObject"><code>getDataObject()</code></a> method if necessary,
-and their <a href="DataService.html#mapRawData"><code>mapRawData()</code></a> method
+and their <a href="DataService.html#mapFromRawData"><code>mapFromRawData()</code></a> method
 or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
-<a href="DataMapping.html#mapRawData"><code>mapRawData()</code></a> method if necessary.</p>
+<a href="DataMapping.html#mapFromRawData"><code>mapFromRawData()</code></a> method if necessary.</p>
 </div>
 
 
@@ -985,7 +1030,9 @@ or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
             
 
             <td class="description last"><p>A value that will be passed to
-                                  <a href="DataMapping.html#mapRawData"><code>mapRawData()</code></a>
+                                  <code>getDataObject()</code>
+                                  and
+                                  <a href="DataMapping.html#mapFromRawData"><code>mapFromRawData()</code></a>
                                   if it is provided.</p></td>
         </tr>
 
@@ -1027,7 +1074,7 @@ or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line452">line 452</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line545">line 545</a>
     </li></ul></dd>
     
 
@@ -1158,7 +1205,7 @@ or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line295">line 295</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line347">line 347</a>
     </li></ul></dd>
     
 
@@ -1213,7 +1260,7 @@ or their <a href="DataService.html#mapping"><code>mapping</code></a>'s
 
     
 
-    <h4 class="name" id="fetchData"><span class="type-signature"></span>fetchData<span class="signature">(selector, stream)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="fetchData"><span class="type-signature"></span>fetchData<span class="signature">(selector, stream)</span><span class="type-signature"> &rarr; {<a href="DataStream.html">DataStream</a>}</span></h4>
 
     
 
@@ -1227,18 +1274,18 @@ objects using this service.</p>
 and registers corresponding data objects using the
 <a href="DataService.html#getDataObject"><code>getDataObject()</code></a> method, maps the raw
 data to those data objects using the
-<a href="DataService.html#mapRawData"><code>mapRawData()</code></a> method, and then returns
-those objects in the specified stream or in a new stream created for this
-purpose.</p>
+<a href="DataService.html#mapFromRawData"><code>mapFromRawData()</code></a> method, and then
+returns those objects in the specified stream or in a new stream created
+for this purpose.</p>
 <p>The data may be fetched asynchronously, in which case the data stream
 will be returned immediately but the data objects will be gotten and
 created or registered, filled with data, and added to the stream at a
 later time.</p>
 <p>Subclasses should not override this method, they should instead override
 their <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> method and their
-<a href="DataService.html#mapRawData"><code>mapRawData()</code></a> method or their
+<a href="DataService.html#mapFromRawData"><code>mapFromRawData()</code></a> method or their
 <a href="DataService.html#mapping"><code>mapping's</code></a>
-<a href="DataMapping.html#mapRawData"><code>mapRawData()</code></a> method.</p>
+<a href="DataMapping.html#mapFromRawData"><code>mapFromRawData()</code></a> method.</p>
 </div>
 
 
@@ -1293,8 +1340,8 @@ their <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> me
             <td class="description last"><p>Defines what data should be returned.
                                     A <a href="ObjectDescriptor.html"><code>type</code></a> can
                                     be provided instead of a
-                                    <a href="DataSelector.html"><code>DataSelector</code></a>,
-                                    in which case a DataSelector with no
+                                    <a href="DataSelector.html"><code>DataSelector</code></a>, in which
+                                    case a DataSelector with no
                                     <a href="DataSelector.html#criteria"><code>criteria</code></a>
                                     will be created and used for the
                                     fetch.</p></td>
@@ -1364,7 +1411,7 @@ their <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> me
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line233">line 233</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line222">line 222</a>
     </li></ul></dd>
     
 
@@ -1387,6 +1434,30 @@ their <a href="DataService.html#fetchRawData"><code>fetchRawData()</code></a> me
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>The stream provided to or created by this method.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="DataStream.html">DataStream</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1512,7 +1583,7 @@ method is called, even after it returns.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line416">line 416</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line499">line 499</a>
     </li></ul></dd>
     
 
@@ -1643,7 +1714,7 @@ method is called, even after it returns.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line147">line 147</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -1674,7 +1745,7 @@ method is called, even after it returns.</p>
 
     
 
-    <h4 class="name" id="getDataObject"><span class="type-signature"></span>getDataObject<span class="signature">(type, rawData)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="getDataObject"><span class="type-signature"></span>getDataObject<span class="signature">(type, data, context)</span><span class="type-signature"> &rarr; {Object}</span></h4>
 
     
 
@@ -1741,7 +1812,7 @@ such object exists, create one.</p>
 
         <tr>
             
-                <td class="name"><code>rawData</code></td>
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -1759,6 +1830,31 @@ such object exists, create one.</p>
 
             <td class="description last"><p>An object whose property values hold
                                     the raw data.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">?</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A value that was passed in to the
+                                    <a href="DataService.html#addRawData"><code>addRawData()</code></a>
+                                    call that invoked this method.</p></td>
         </tr>
 
     
@@ -1799,7 +1895,7 @@ such object exists, create one.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line330">line 330</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line413">line 413</a>
     </li></ul></dd>
     
 
@@ -1865,6 +1961,13 @@ or if no such object exists a newly created object for that data.</li>
     <p>Request possibly asynchronous values from a data object.</p>
 <p>Subclasses should not override this method, they should override
 <a href="DataService.html#getPropertyData"><code>getPropertyData()</code></a> instead.</p>
+<p>Although this method returns a promise, the requested data will not be
+passed in to the promise's callback. Instead that value will be set on
+the object passed in to this method and it can be obtained from there
+when the callback is called, as in the following code:</p>
+<pre class="prettyprint source"><code>myService.getObjectData(myObject, &quot;x&quot;, &quot;y&quot;).then(function () {
+    someFunction(myObject.x, myObject.y);
+}</code></pre>
 </div>
 
 
@@ -1916,8 +2019,8 @@ or if no such object exists a newly created object for that data.</li>
 
             
 
-            <td class="description last"><p>The object whose property values
-                                      are being requested.</p></td>
+            <td class="description last"><p>The object whose property values are
+                                     being requested.</p></td>
         </tr>
 
     
@@ -1941,11 +2044,11 @@ or if no such object exists a newly created object for that data.</li>
             
 
             <td class="description last"><p>The names of each of the properties
-                                      whose values are being requested.
-                                      These can be provided as an array
-                                      of strings or as a list of string
-                                      arguments following the object
-                                      argument.</p></td>
+                                     whose values are being requested.
+                                     These can be provided as an array of
+                                     strings or as a list of string
+                                     arguments following the object
+                                     argument.</p></td>
         </tr>
 
     
@@ -1986,7 +2089,7 @@ or if no such object exists a newly created object for that data.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line555">line 555</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line659">line 659</a>
     </li></ul></dd>
     
 
@@ -2015,12 +2118,8 @@ or if no such object exists a newly created object for that data.</li>
 <div class="param-desc">
     <ul>
 <li>A promise fulfilled when all of the
-requested data has been received and set in the specified object's
-property values. The argument passed to this promise's callback will be
-<code>null</code>. To avoid the creation of unnecessary objects, subclasses
-overriding this method should return DataService's shared
-<a href="DataService.html#.NULL_PROMISE"><code>NULL_PROMISE</code></a> when all the requested
-data is available at the time this method is called.</li>
+requested data has been received and set on the specified properties of
+the passed in object.</li>
 </ul>
 </div>
 
@@ -2147,7 +2246,7 @@ data is available at the time this method is called.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line370">line 370</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line428">line 428</a>
     </li></ul></dd>
     
 
@@ -2212,9 +2311,35 @@ type can be determined.</li>
 <div class="description">
     <p>Request the possibly asynchronous value of a single property of a data
 object.</p>
-<p>External objects should not call this method, they should call
-<a href="DataService.html#getObjectData"><code>getObjectData()</code></a> instead. This method
-exists only so it can be overridden in subclasses.</p>
+<p>This method should not be called directly.
+<a href="DataService.html#getObjectData"><code>getObjectData()</code></a> should be called
+instead. It will in turn call this method.</p>
+<p>Like the promise returned by
+<a href="DataService.html#getObjectData"><code>getObjectData()</code></a>, the promise returned
+by this method will not pass the requested value to its callback. Instead
+that value will be set on the object passed in to this method and it can
+be obtained from there when the callback is called.</p>
+<p>Subclasses should override this method if they want to provide custom
+fetching of object data. Because this method can be called very often,
+subclasses overriding it should cache any data that is expensive to
+fetch, and they should avoid any slow operations or the creation of
+unnecessary objects when returning data that is cached or otherwise
+immediately available. One way they can avoid creating unnecessary
+objects is by using <a href="DataService.html#nullPromise"><code>nullPromise</code></a> when
+appropriate, as in the following code:</p>
+<pre class="prettyprint source"><code>getPropertyData: {
+    value: function (object, propertyName) {
+        var self = this,
+            promise = this.nullPromise;
+        if (propertyName === &quot;x&quot; && !this.x) {
+            promise = this.fetchX().then(function (x) {
+                self.x = x;
+                return null;
+            });
+        }
+        return promise;
+    }
+}</code></pre>
 </div>
 
 
@@ -2332,7 +2457,7 @@ exists only so it can be overridden in subclasses.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line610">line 610</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line777">line 777</a>
     </li></ul></dd>
     
 
@@ -2361,11 +2486,8 @@ exists only so it can be overridden in subclasses.</p>
 <div class="param-desc">
     <ul>
 <li>A promise fulfilled when the requested
-property value has been set. The argument passed to this promise's
-callback will be <code>null</code>. To avoid the creation of unnecessary objects,
-subclasses overriding this method should return DataService's shared
-<a href="DataService.html#.NULL_PROMISE"><code>NULL_PROMISE</code></a> when all the requested
-data is available at the time this method is called.</li>
+value has been received and set on the specified property of the passed
+in object.</li>
 </ul>
 </div>
 
@@ -2392,7 +2514,7 @@ data is available at the time this method is called.</li>
 
     
 
-    <h4 class="name" id="mapRawData"><span class="type-signature"></span>mapRawData<span class="signature">(dataObject, rawData, context)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="mapFromRawData"><span class="type-signature"></span>mapFromRawData<span class="signature">(object, data, context)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2402,10 +2524,10 @@ data is available at the time this method is called.</li>
     <p>Convert raw data to data objects of an appropriate type.</p>
 <p>Subclasses should override this method to map properties of the raw data
 to data objects, as in the following:</p>
-<pre class="prettyprint source"><code>mapRawData: {
-    value: function (dataObject, rawData) {
-        dataObject.firstName = rawData.GIVEN_NAME;
-        dataObject.lastName = rawData.FAMILY_NAME;
+<pre class="prettyprint source"><code>mapFromRawData: {
+    value: function (object, data) {
+        object.firstName = data.GIVEN_NAME;
+        object.lastName = data.FAMILY_NAME;
     }
 }</code></pre><p>Alternatively, subclasses can define a
 <a href="DataService.html#mapping"><code>mapping</code></a> to do this mapping.</p>
@@ -2446,7 +2568,7 @@ by the raw data object to the data object.</p>
 
         <tr>
             
-                <td class="name"><code>dataObject</code></td>
+                <td class="name"><code>object</code></td>
             
 
             <td class="type">
@@ -2462,16 +2584,15 @@ by the raw data object to the data object.</p>
 
             
 
-            <td class="description last"><p>An object whose properties will be
-                                set or modified to represent the data
-                                define in rawData.</p></td>
+            <td class="description last"><p>An object whose properties must be set or
+                            modified to represent the raw data.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>rawData</code></td>
+                <td class="name"><code>data</code></td>
             
 
             <td class="type">
@@ -2488,7 +2609,7 @@ by the raw data object to the data object.</p>
             
 
             <td class="description last"><p>An object whose properties' values hold
-                                the raw data.</p></td>
+                            the raw data.</p></td>
         </tr>
 
     
@@ -2511,9 +2632,9 @@ by the raw data object to the data object.</p>
 
             
 
-            <td class="description last"><p>A value that was passed in to
-                                <a href="DataService.html#addRawData"><code>addRawData()</code></a>
-                                call that invoked this method.</p></td>
+            <td class="description last"><p>A value that was passed in to the
+                            <a href="DataService.html#addRawData"><code>addRawData()</code></a>
+                            call that invoked this method.</p></td>
         </tr>
 
     
@@ -2554,7 +2675,7 @@ by the raw data object to the data object.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line495">line 495</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line587">line 587</a>
     </li></ul></dd>
     
 
@@ -2691,7 +2812,7 @@ added to that stream.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line522">line 522</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line621">line 621</a>
     </li></ul></dd>
     
 
@@ -2823,7 +2944,7 @@ added to that stream.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line182">line 182</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line170">line 170</a>
     </li></ul></dd>
     
 
@@ -2908,7 +3029,7 @@ child service itself.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line277">line 277</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line291">line 291</a>
     </li></ul></dd>
     
 
@@ -2936,8 +3057,164 @@ child service itself.</p>
         
 <div class="param-desc">
     <ul>
-<li>A promise fulfilled when all of the
-changed data has been saved.</li>
+<li>A promise fulfilled when all of the changed
+data has been saved.</li>
+</ul>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="external-Promise.html">external:Promise</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="saveDataObject"><span class="type-signature"></span>saveDataObject<span class="signature">(object)</span><span class="type-signature"> &rarr; {<a href="external-Promise.html">external:Promise</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Save changes made to one data object managed by this service.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The object whose data should be saved.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line264">line 264</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>A promise fulfilled when all of the data in
+the changed object has been saved.</li>
 </ul>
 </div>
 
@@ -3136,7 +3413,7 @@ changed data has been saved.</li>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line676">line 676</a>
+        <a href="logic_service_data-service.js.html">logic/service/data-service.js</a>, <a href="logic_service_data-service.js.html#line869">line 869</a>
     </li></ul></dd>
     
 
@@ -3178,13 +3455,13 @@ changed data has been saved.</li>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataObjectDescriptor.html">DataObjectDescriptor</a></li><li><a href="DataPropertyDescriptor.html">DataPropertyDescriptor</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="Enumeration.html">Enumeration</a></li><li><a href="HttpService.html">HttpService</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 22:10:40 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Oct 30 2015 10:20:02 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -34,6 +34,7 @@
     Map = require("collections/map"),
     ObjectDescriptor = require("logic/model/object-descriptor").ObjectDescriptor,
     Promise = require("bluebird"),
+    Set = require("collections/set"),
     WeakMap = require("collections/weak-map");
 
 /**
@@ -46,7 +47,7 @@
  * @class
  * @extends external:Montage
  */
-exports.DataService = Montage.specialize(/** @lends DataService# */{
+exports.DataService = Montage.specialize(/** @lends DataService.prototype */{
 
     /***************************************************************************
      * Initialization
@@ -61,9 +62,9 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
     },
 
     /***************************************************************************
-     * Instance variables
+     * Basic properties
      *
-     * Private instance variables are defined where they are used.
+     * Private properties are defined where they are used.
      */
 
     /**
@@ -89,32 +90,19 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
         set: function (type) {
             if (type &amp;&amp; !this._type) {
                 this._type = type;
-                this._prototype = Object.create(type.prototype);
-                this._triggers = DataTrigger.addTriggers(this, this._prototype);
             }
         }
     },
 
     /**
-     * If defined, used by [mapRawData()]{@link DataService#mapRawData} to map
-     * the raw data on which this service is based to the data objects returned
-     * by this service.
+     * If defined, used by [mapFromRawData()]{@link DataService#mapFromRawData}
+     * to map the raw data on which this service is based to the data objects
+     * returned by this service.
      *
      * @type {Object}
      */
     mapping: {
         value: undefined
-    },
-
-    /**
-     * A reference to DataService.NULL_PROMISE.
-     *
-     * @type {external:Promise}
-     */
-    nullPromise: {
-        get: function () {
-            return exports.DataService.NULL_PROMISE;
-        }
     },
 
     /***************************************************************************
@@ -229,9 +217,9 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * and registers corresponding data objects using the
      * [getDataObject()]{@link DataService#getDataObject} method, maps the raw
      * data to those data objects using the
-     * [mapRawData()]{@link DataService#mapRawData} method, and then returns
-     * those objects in the specified stream or in a new stream created for this
-     * purpose.
+     * [mapFromRawData()]{@link DataService#mapFromRawData} method, and then
+     * returns those objects in the specified stream or in a new stream created
+     * for this purpose.
      *
      * The data may be fetched asynchronously, in which case the data stream
      * will be returned immediately but the data objects will be gotten and
@@ -240,16 +228,16 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      *
      * Subclasses should not override this method, they should instead override
      * their [fetchRawData()]{@link DataService#fetchRawData} method and their
-     * [mapRawData()]{@link DataService#mapRawData} method or their
+     * [mapFromRawData()]{@link DataService#mapFromRawData} method or their
      * [mapping's]{@link DataService#mapping}
-     * [mapRawData()]{@link DataMapping#mapRawData} method.
+     * [mapFromRawData()]{@link DataMapping#mapFromRawData} method.
      *
      * @method
      * @argument {DataSelector} selector - Defines what data should be returned.
      *                                     A [type]{@link ObjectDescriptor} can
      *                                     be provided instead of a
-     *                                     [DataSelector]{@link DataSelector},
-     *                                     in which case a DataSelector with no
+     *                                     {@link DataSelector}, in which
+     *                                     case a DataSelector with no
      *                                     [criteria]{@link DataSelector#criteria}
      *                                     will be created and used for the
      *                                     fetch.
@@ -257,6 +245,7 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      *                                     should be added. If not stream is
      *                                     provided a stream will be created and
      *                                     returned by this method.
+     * @returns {DataStream} - The stream provided to or created by this method.
      */
     fetchData: {
         value: function (selector, stream) {
@@ -276,7 +265,7 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
             }
             // Get the data from raw date or from a child service.
             if (service === this) {
-                this.fetchRawData(stream);
+                service.fetchRawData(stream);
             } else if (service) {
                 stream = service.fetchData(stream.selector, stream);
             } else {
@@ -293,14 +282,39 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      */
 
     /**
+     * Save changes made to one data object managed by this service.
+     *
+     * @method
+     * @argument {Object} object   - The object whose data should be saved.
+     * @returns {external:Promise} - A promise fulfilled when all of the data in
+     * the changed object has been saved.
+     */
+    saveDataObject: {
+        value: function (object) {
+            var type = this.rootService.getObjectType(object),
+                service = this.rootService.getChildService(type);
+            return service !== this ? service.saveDataObject(object) :
+                                      this._mapAndSaveDataObject(object);
+        }
+    },
+
+    _mapAndSaveDataObject: {
+        value: function (object) {
+            var data = {};
+            this.mapToRawData(object, data);
+            return this.saveRawData(data, object);
+        }
+    },
+
+    /**
      * Save all the changes that were made to any of the objects managed by this
      * service since those objects were fetched. Note that objects fetched by a
      * child service will be managed by that service's root service, not by the
      * child service itself.
      *
      * @method
-     * @returns {external:Promise} - A promise fulfilled when all of the
-     * changed data has been saved.
+     * @returns {external:Promise} - A promise fulfilled when all of the changed
+     * data has been saved.
      */
     saveDataChanges: {
         value: function () {
@@ -314,6 +328,44 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      */
 
     /**
+     * A set of the data objects managed by this service or any other descendent
+     * of this service's [root service]@{link DataService.rootService} that have
+     * been changed since [saveDataChanges()]@{link DataService.saveDataChanges}
+     * was last called, or since the root service was created if
+     * saveDataChanges() hasn't been called yet.
+     *
+     * @type {Set&lt;Object>}
+     */
+    changedDataObjects: {
+        get: function () {
+            var root = this.rootService
+            if (!root._changedDataObjects) {
+                root._changedDataObjects = new Set();
+            }
+            return root._changedDataObjects;
+        }
+    },
+
+    /**
+     * A set of the data objects created by this service or any other descendent
+     * of this service's [root service]@{link DataService.rootService} since
+     * [saveDataChanges()]@{link DataService.saveDataChanges} was last called,
+     * or since the root service was created if saveDataChanges() hasn't been
+     * called yet.
+     *
+     * @type {Set&lt;Object>}
+     */
+    createdDataObjects: {
+        get: function () {
+            var root = this.rootService
+            if (!root._createdDataObjects) {
+                root._createdDataObjects = new Set();
+            }
+            return root._createdDataObjects;
+        }
+    },
+
+    /**
      * Create a new data object of a specified type.
      *
      * @method
@@ -322,12 +374,30 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      */
     createDataObject: {
         value: function (type) {
+            var object = this._createDataObject(type);
+            if (object) {
+                this.createdDataObjects.add(object);
+            }
+            return object;
+        }
+    },
+
+    /**
+     * Create a data object without registering it as a new object.
+     *
+     * @private
+     * @method
+     * @argument {ObjectDescriptor} type - The type of object to create.
+     * @returns {Object}                 - The created object.
+     */
+    _createDataObject: {
+        value: function (type) {
             // TODO [Charles]: Object uniquing.
             var service, object;
             // Use the appropriate service to create the object.
             service = this.getChildService(type);
             if (service === this) {
-                object = Object.create(this._prototype);
+                object = Object.create(this._dataObjectPrototype);
                 object.constructor.call(object);
             } else if (service) {
                 object = service.createDataObject(type);
@@ -344,21 +414,54 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
         }
     },
 
+    _dataObjectPrototype: {
+        get: function () {
+            if (!this.__dataObjectPrototype &amp;&amp; this.type) {
+                this.__dataObjectPrototype = Object.create(this.type.prototype);
+                this._triggers = DataTrigger.addTriggers(this, this.__dataObjectPrototype);
+            }
+            return this.__dataObjectPrototype;
+        }
+    },
+
     /**
      * Find an existing object corresponding to the specified raw data, or if no
      * such object exists, create one.
      *
      * @method
      * @argument {ObjectDescriptor} type - The type of object to get or create.
-     * @argument {Object} rawData        - An object whose property values hold
+     * @argument {Object} data           - An object whose property values hold
      *                                     the raw data.
+     * @argument {?} context             - A value that was passed in to the
+     *                                     [addRawData()]{@link DataService#addRawData}
+     *                                     call that invoked this method.
      * @returns {Object} - The object corresponding to the specified raw data,
      * or if no such object exists a newly created object for that data.
      */
     getDataObject: {
-        value: function (type, rawData) {
+        value: function (type, data, context) {
             // TODO [Charles]: Object uniquing.
-            return this.createDataObject(type);
+            return this._createDataObject(type);
+        }
+    },
+
+    /**
+     * Get the type of the specified data object.
+     *
+     * @method
+     * @argument {Object} object   - The object whose type is sought.
+     * @returns {ObjectDescriptor} - The type of the object, or undefined if no
+     * type can be determined.
+     */
+    getObjectType: {
+        value: function (object) {
+            var registry = this.rootService._typeRegistry,
+                type = registry &amp;&amp; registry.get(object);
+            while (object &amp;&amp; !(type instanceof ObjectDescriptor)) {
+                type = object.constructor.TYPE;
+                object = Object.getPrototypeOf(object);
+            }
+            return object &amp;&amp; type;
         }
     },
 
@@ -384,26 +487,6 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
                 root._typeRegistry = root._typeRegistry || new WeakMap();
                 root._typeRegistry.set(object, type);
             }
-        }
-    },
-
-    /**
-     * Get the type of the specified data object.
-     *
-     * @method
-     * @argument {Object} object   - The object whose type is sought.
-     * @returns {ObjectDescriptor} - The type of the object, or undefined if no
-     * type can be determined.
-     */
-    getObjectType: {
-        value: function (object) {
-            var registry = this.rootService._typeRegistry,
-                type = registry &amp;&amp; registry.get(object);
-            while (object &amp;&amp; !(type instanceof ObjectDescriptor)) {
-                type = object.constructor.TYPE;
-                object = Object.getPrototypeOf(object);
-            }
-            return object &amp;&amp; type;
         }
     },
 
@@ -447,6 +530,14 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
         }
     },
 
+    // TODO: Document.
+    saveRawData: {
+        value: function (data, context) {
+            // Subclasses must override this.
+            return this.nullPromise;
+        }
+    },
+
     /**
      * To be called by [fetchRawData()]{@link DataService#fetchRawData} when raw
      * data is received. This method should never be called directly by users of
@@ -456,15 +547,15 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * will represent the raw data with repeated calls to
      * [getDataObject()]{@link DataService#getDataObject}, maps
      * the raw data to those objects with repeated calls to
-     * [mapRawData()]{@link DataService#mapRawData}, and then adds those objects
-     * to the specified stream.
+     * [mapFromRawData()]{@link DataService#mapFromRawData}, and then adds those
+     * objects to the specified stream.
      *
      * Subclasses will probably never need to override
      * this method, and they can instead override their
      * [getDataObject()]{@link DataService#getDataObject} method if necessary,
-     * and their [mapRawData()]{@link DataService#mapRawData} method
+     * and their [mapFromRawData()]{@link DataService#mapFromRawData} method
      * or their [mapping]{@link DataService#mapping}'s
-     * [mapRawData()]{@link DataMapping#mapRawData} method if necessary.
+     * [mapFromRawData()]{@link DataMapping#mapFromRawData} method if necessary.
      *
      * @method
      * @argument {DataStream} stream   - The stream to which the data objects
@@ -474,7 +565,9 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      *                                   values hold the raw data. This array
      *                                   will be modified by this method.
      * @argument {?} context           - A value that will be passed to
-     *                                   [mapRawData()]{@link DataMapping#mapRawData}
+     *                                   [getDataObject()]{@link DataMapping#getDataObject}
+     *                                   and
+     *                                   [mapFromRawData()]{@link DataMapping#mapFromRawData}
      *                                   if it is provided.
      */
     addRawData: {
@@ -483,8 +576,8 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
             // will be done in place to avoid creating an extra array.
             var i, n, object;
             for (i = 0, n = rawData ? rawData.length : 0; i &lt; n; ++i) {
-                object = this.getDataObject(this.type, rawData[i]);
-                this.mapRawData(object, rawData[i], context);
+                object = this.getDataObject(this.type, rawData[i], context);
+                this.mapFromRawData(object, rawData[i], context);
                 rawData[i] = object;
             }
             stream.addData(rawData);
@@ -497,10 +590,10 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * Subclasses should override this method to map properties of the raw data
      * to data objects, as in the following:
      *
-     *     mapRawData: {
-     *         value: function (dataObject, rawData) {
-     *             dataObject.firstName = rawData.GIVEN_NAME;
-     *             dataObject.lastName = rawData.FAMILY_NAME;
+     *     mapFromRawData: {
+     *         value: function (object, data) {
+     *             object.firstName = data.GIVEN_NAME;
+     *             object.lastName = data.FAMILY_NAME;
      *         }
      *     }
      *
@@ -511,26 +604,32 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * by the raw data object to the data object.
      *
      * @method
-     * @argument {Object} dataObject - An object whose properties will be
-     *                                 set or modified to represent the data
-     *                                 define in rawData.
-     * @argument {Object} rawData    - An object whose properties' values hold
-     *                                 the raw data.
-     * @argument {?} context         - A value that was passed in to
-     *                                 [addRawData()]{@link DataService#addRawData}
-     *                                 call that invoked this method.
+     * @argument {Object} object - An object whose properties must be set or
+     *                             modified to represent the raw data.
+     * @argument {Object} data   - An object whose properties' values hold
+     *                             the raw data.
+     * @argument {?} context     - A value that was passed in to the
+     *                             [addRawData()]{@link DataService#addRawData}
+     *                             call that invoked this method.
      */
-    mapRawData: {
-        value: function (dataObject, rawData, context) {
-            var key;
+    mapFromRawData: {
+        value: function (object, data, context) {
+            var i;
             if (this.mapping) {
-                this.mapping.mapRawData(dataObject, rawData, context);
-            } else if (rawData) {
-                for (key in rawData) {
-                    dataObject[key] = rawData[key];
+                this.mapping.mapFromRawData(object, data, context);
+            } else if (data) {
+                for (i in data) {
+                    object[i] = data[i];
                 }
             }
-            return dataObject;
+        }
+    },
+
+    // TODO: Document.
+    mapToRawData: {
+        value: function (object, data) {
+            // TO DO: Provide a default mapping based on object.TYPE.
+            // For now, subclasses must override this.
         }
     },
 
@@ -554,7 +653,7 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
     },
 
     /***************************************************************************
-     * Data object data
+     * Object data
      */
 
     /**
@@ -563,55 +662,97 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * Subclasses should not override this method, they should override
      * [getPropertyData()]{@link DataService#getPropertyData} instead.
      *
+     * Although this method returns a promise, the requested data will not be
+     * passed in to the promise's callback. Instead that value will be set on
+     * the object passed in to this method and it can be obtained from there
+     * when the callback is called, as in the following code:
+     *
+     *     myService.getObjectData(myObject, "x", "y").then(function () {
+     *         someFunction(myObject.x, myObject.y);
+     *     }
+     *
      * @method
-     * @argument {object} object           - The object whose property values
-     *                                       are being requested.
-     * @argument {string[]} propertyNames  - The names of each of the properties
-     *                                       whose values are being requested.
-     *                                       These can be provided as an array
-     *                                       of strings or as a list of string
-     *                                       arguments following the object
-     *                                       argument.
+     * @argument {object} object          - The object whose property values are
+     *                                      being requested.
+     * @argument {string[]} propertyNames - The names of each of the properties
+     *                                      whose values are being requested.
+     *                                      These can be provided as an array of
+     *                                      strings or as a list of string
+     *                                      arguments following the object
+     *                                      argument.
      * @returns {external:Promise} - A promise fulfilled when all of the
-     * requested data has been received and set in the specified object's
-     * property values. The argument passed to this promise's callback will be
-     * `null`. To avoid the creation of unnecessary objects, subclasses
-     * overriding this method should return DataService's shared
-     * [NULL_PROMISE]{@link DataService.NULL_PROMISE} when all the requested
-     * data is available at the time this method is called.
+     * requested data has been received and set on the specified properties of
+     * the passed in object.
      */
     getObjectData: {
         value: function (object, propertyNames) {
-            var names, start, promiseArray, promiseSet, promise, i, n;
-            // Accept property names as an array or as a list of arguments.
+            var names, start, promises, promise, i, n;
+            // Accept property names as an array or as a list of arguments, but
+            // avoid creating a new array to hold those property names.
             names = Array.isArray(propertyNames) ? propertyNames : arguments;
             start = names === propertyNames ? 0 : 1;
             // Request each data value separately, collecting unique resulting
-            // promises into an array and a set, but avoiding creating that
-            // array and that set unless absolutely necessary.
+            // promises into an array and a set, but avoid creating that array
+            // and that set until that is necessary.
             for (i = start, n = names.length; i &lt; n; ++i) {
                 promise = this.getPropertyData(object, names[i]);
                 if (promise !== this.nullPromise) {
-                    if (!promiseArray) {
-                        promiseArray = [promise];
-                    } else if (promiseArray.length === 1 &amp;&amp; promiseArray[0] !== promise) {
-                        promiseSet = new Set();
-                        promiseSet.add(promiseArray[0]);
-                        promiseSet.add(promise);
-                        promiseArray.push(promise);
-                    } else if (promiseSet &amp;&amp; !promiseSet.has(promise)) {
-                        promiseSet.add(promise);
-                        promiseArray.push(promise);
+                    if (!promises) {
+                        promises = {array: [promise]};
+                    } else if (!promises.set &amp;&amp; promises.array[0] !== promise) {
+                        promises.set = new Set();
+                        promises.set.add(promises.array[0]);
+                        promises.set.add(promise);
+                        promises.array.push(promise);
+                    } else if (promises.set &amp;&amp; !promises.set.has(promise)) {
+                        promises.set.add(promise);
+                        promises.array.push(promise);
                     }
                 }
             }
             // Return a promise that will be fulfilled only when all of the
-            // requested data has been set on the object.
-            return !promiseArray ?             this.nullPromise :
-                   promiseArray.length === 1 ? promiseArray[0] :
-                                               Promise.all(promiseArray).then(function (values) {
-                                                   return null;
-                                               });
+            // requested data has been set on the object, and if possible avoid
+            // creating an additional promise for this.
+            return !promises ?     this.nullPromise :
+                   !promises.set ? promises.array[0] :
+                                   Promise.all(promises.array).then(this.nullFunction);
+        }
+    },
+
+    // TODO: Document.
+    // TODO: Share code with getObjectData.
+    updateObjectData: {
+        value: function (object, propertyNames) {
+            var names, start, promises, promise, i, n;
+            // Accept property names as an array or as a list of arguments, but
+            // avoid creating a new array to hold those property names.
+            names = Array.isArray(propertyNames) ? propertyNames : arguments;
+            start = names === propertyNames ? 0 : 1;
+            // Request each data value separately, collecting unique resulting
+            // promises into an array and a set, but avoid creating that array
+            // and that set until that is necessary.
+            for (i = start, n = names.length; i &lt; n; ++i) {
+                promise = this.updatePropertyData(object, names[i]);
+                if (promise !== this.nullPromise) {
+                    if (!promises) {
+                        promises = {array: [promise]};
+                    } else if (!promises.set &amp;&amp; promises.array[0] !== promise) {
+                        promises.set = new Set();
+                        promises.set.add(promises.array[0]);
+                        promises.set.add(promise);
+                        promises.array.push(promise);
+                    } else if (promises.set &amp;&amp; !promises.set.has(promise)) {
+                        promises.set.add(promise);
+                        promises.array.push(promise);
+                    }
+                }
+            }
+            // Return a promise that will be fulfilled only when all of the
+            // requested data has been set on the object, and if possible avoid
+            // creating an additional promise for this.
+            return !promises ?     this.nullPromise :
+                   !promises.set ? promises.array[0] :
+                                   Promise.all(promises.array).then(this.nullFunction);
         }
     },
 
@@ -619,9 +760,38 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * Request the possibly asynchronous value of a single property of a data
      * object.
      *
-     * External objects should not call this method, they should call
-     * [getObjectData()]{@link DataService#getObjectData} instead. This method
-     * exists only so it can be overridden in subclasses.
+     * This method should not be called directly.
+     * [getObjectData()]{@link DataService#getObjectData} should be called
+     * instead. It will in turn call this method.
+     *
+     * Like the promise returned by
+     * [getObjectData()]{@link DataService#getObjectData}, the promise returned
+     * by this method will not pass the requested value to its callback. Instead
+     * that value will be set on the object passed in to this method and it can
+     * be obtained from there when the callback is called.
+     *
+     * Subclasses should override this method if they want to provide custom
+     * fetching of object data. Because this method can be called very often,
+     * subclasses overriding it should cache any data that is expensive to
+     * fetch, and they should avoid any slow operations or the creation of
+     * unnecessary objects when returning data that is cached or otherwise
+     * immediately available. One way they can avoid creating unnecessary
+     * objects is by using [nullPromise]{@link DataService#nullPromise} when
+     * appropriate, as in the following code:
+     *
+     *     getPropertyData: {
+     *         value: function (object, propertyName) {
+     *             var self = this,
+     *                 promise = this.nullPromise;
+     *             if (propertyName === "x" &amp;&amp; !this.x) {
+     *                 promise = this.fetchX().then(function (x) {
+     *                     self.x = x;
+     *                     return null;
+     *                 });
+     *             }
+     *             return promise;
+     *         }
+     *     }
      *
      * @method
      * @argument {object} object   - The object whose property value is being
@@ -629,11 +799,8 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
      * @argument {string} name     - The name of the property whose value is
      *                               being requested.
      * @returns {external:Promise} - A promise fulfilled when the requested
-     * property value has been set. The argument passed to this promise's
-     * callback will be `null`. To avoid the creation of unnecessary objects,
-     * subclasses overriding this method should return DataService's shared
-     * [NULL_PROMISE]{@link DataService.NULL_PROMISE} when all the requested
-     * data is available at the time this method is called.
+     * value has been received and set on the specified property of the passed
+     * in object.
      */
     getPropertyData: {
         value: function (object, propertyName) {
@@ -651,43 +818,69 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
             //    fetch is done and when the returned values has been set.
             var type = this.rootService.getObjectType(object),
                 service = this.rootService.getChildService(type),
-                trigger = service &amp;&amp; service._triggers &amp;&amp; service._triggers[propertyName],
-                promise = trigger &amp;&amp; trigger.promises.get(object);
-            if (service !== this &amp;&amp; trigger &amp;&amp; typeof promise === "undefined") {
-                trigger.promises.set(object, null); // Avoid any possibility of stack overflow in the next line.
-                promise = service.getPropertyData(object, propertyName);
-                trigger.promises.set(object, promise);
-            }
-            return promise || this.nullPromise;
+                trigger = service !== this &amp;&amp; service._triggers &amp;&amp; service._triggers[propertyName];
+            return trigger ? trigger.getPropertyData(object) : this.nullPromise;
         }
     },
 
-// TODO [Charles]: Fix, test, &amp; use.
-//
-//    updateObjectData: {
-//        value: function (object, propertyNames) {
-//            var names, start, type, service, trigger, promise, i, n;
-//            // Accept property names as an array or as a list of arguments.
-//            names = Array.isArray(propertyNames) ? propertyNames : arguments;
-//            start = names === propertyNames ? 0 : 1;
-//            // Clear the "this is fetched" markers for the specified properties.
-//            for (i = start, n = names.length; i &lt; n; ++i) {
-//                type = DataService.mainService.getObjectType(object),
-//                service = DataService.mainService.getChildService(type),
-//                trigger = service &amp;&amp; service._triggers &amp;&amp; service._triggers[names[i]],
-//                promise = trigger &amp;&amp; trigger.promises &amp;&amp; trigger.promises.get(object);
-//                if (promise === DataService.NULL_PROMISE) {
-//                    trigger.promises.delete(object);
-//                }
-//            }
-//            // Re-fetch any fetchable data.
-//            return DataService.mainService.getObjectData.apply(this, arguments);
-//        }
-//    },
+    // TODO: Document.
+    // TODO: Share code with getPropertyData.
+    updatePropertyData: {
+        value: function (object, propertyName) {
+            // TODO [Charles]: For now we'll require subclasses to handle this
+            // manually but eventually this can be handled automatically using
+            // relationship information to generate appropriate queries with
+            // logic like the following:
+            // 1) Looking at the object, find out if this value has been set.
+            // 2) If so, return the null promise.
+            // 3) If not, look for the corresponding relationship in the model
+            //    and check if this relationships is already being fetched.
+            // 4) If so, return the promise for that fetch.
+            // 5) If not, schedule the fetch to be done at the next tick of the
+            //    event loop and return a promise that is fulfilled when the
+            //    fetch is done and when the returned values has been set.
+            var type = this.rootService.getObjectType(object),
+                service = this.rootService.getChildService(type),
+                trigger = service !== this &amp;&amp; service._triggers &amp;&amp; service._triggers[propertyName];
+            return trigger ? trigger.updatePropertyData(object) : this.nullPromise;
+        }
+    },
 
     /***************************************************************************
      * Utilities
      */
+
+    /**
+     * A shared Promise resolved with a value of `null`, useful for
+     * returning from [getObjectData()]{@link DataService#getObjectData} or
+     * [getPropertyData()]{@link DataService#getPropertyData} when the requested
+     * data is already there.
+     *
+     * @type {external:Promise}
+     */
+    nullPromise: {
+        get: function () {
+            if (!exports.DataService._nullPromise) {
+                exports.DataService._nullPromise = Promise.resolve(null);
+            }
+            return exports.DataService._nullPromise;
+        }
+    },
+
+    /**
+     * A function that does nothing but returns null, useful for terminating
+     * a promise chain that needs to return null, as in the following code:
+     *
+     *     var self = this;
+     *     return this.fetchSomethingAsynchronously().then(function (data) {
+     *         return self.doSomethingAsynchronously(data.part);
+     *     }).then(this.nullFunction);
+     */
+    nullFunction: {
+        value: function () {
+            return null;
+        }
+    },
 
     /**
      * Splice an array into another array.
@@ -713,25 +906,8 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
 }, /** @lends DataService */{
 
     /***************************************************************************
-     * Class constants, variables, and methods
+     * Class variables, and methods
      */
-
-    /**
-     * A shared Promise resolved with a value of `null`, useful for
-     * returning from [getObjectData()]{@link DataService#getObjectData} or
-     * [getPropertyData()]{@link DataService#getPropertyData} when the requested
-     * data is already there.
-     *
-     * @type {Promise}
-     */
-     NULL_PROMISE: {
-         get: function () {
-             if (!this._nullPromise) {
-                 this._nullPromise = Promise.resolve(null);
-             }
-             return this._nullPromise;
-         }
-     },
 
     /**
      * A read-only reference to the applicatin's main service.
@@ -775,25 +951,6 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
         value: function (service) {
             this._mainService = service;
         }
-    },
-
-    /**
-     * Create a service of the specified type.
-     *
-     * This method will typically be called in this way:
-     * ```
-     * var myService = DataService.withType.call(MyService, My.TYPE);
-     * ```
-     *
-     * @method
-     * @returns {DataService}
-     */
-    withType: {
-        value: function (type) {
-            var service = new this();
-            service.type = type;
-            return service;
-        }
     }
 
 });
@@ -807,13 +964,13 @@ exports.DataService = Montage.specialize(/** @lends DataService# */{
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li><li><a href="RelationshipDescriptor.html">RelationshipDescriptor</a></li><li><a href="RestService.html">RestService</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Externals</h3><ul><li><a href="external-FrbExpression.html">FrbExpression</a></li><li><a href="external-Montage.html">Montage</a></li><li><a href="external-Promise.html">Promise</a></li><li><a href="external-Protocol.html">Protocol</a></li><li><a href="external-RangeChangeListener.html">RangeChangeListener</a></li><li><a href="external-Repetition.html">Repetition</a></li><li><a href="external-specialize.html">specialize</a></li></ul><h3>Classes</h3><ul><li><a href="DataMapping.html">DataMapping</a></li><li><a href="DataObjectDescriptor.html">DataObjectDescriptor</a></li><li><a href="DataPropertyDescriptor.html">DataPropertyDescriptor</a></li><li><a href="DataProvider.html">DataProvider</a></li><li><a href="DataSelector.html">DataSelector</a></li><li><a href="DataService.html">DataService</a></li><li><a href="DataStream.html">DataStream</a></li><li><a href="Enumeration.html">Enumeration</a></li><li><a href="HttpService.html">HttpService</a></li><li><a href="ObjectDescriptor.html">ObjectDescriptor</a></li><li><a href="PropertyDescriptor.html">PropertyDescriptor</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Oct 01 2015 22:10:40 GMT-0500 (CDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Fri Oct 30 2015 10:20:02 GMT-0500 (CDT)
 </footer>
 
 <script> prettyPrint(); </script>
