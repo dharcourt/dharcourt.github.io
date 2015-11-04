@@ -1,0 +1,9 @@
+{
+    "name": "sample",
+    "version": "0.1.0",
+    "dependencies": {
+        "montage": "montagestudio/montage-contour#contour"
+    },
+    "private": true,
+    "bundle": [ "ui/main.reel" ]
+}
